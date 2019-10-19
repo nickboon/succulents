@@ -8,31 +8,33 @@ class PlantFactory {
         y = 0,
         leafCount = 1,
         stemRadius = 10,
+        stemOffset = 0,
         angle = goldenAngleDegrees
     } = {}) {
         this.x = x;
         this.y = y;
         this.leafCount = leafCount;
         this.stemRadius = stemRadius;
+        this.stemOffset = stemOffset;
         this.angle = angle;
         this.leafFactory = new LeafFactory();
     }
 
     build() {
-        let plant = '';
+        let leaves = [];
         for (let i = this.leafCount; i > 0; i--)
-            plant += this.leafFactory.buildLeaf({
+            leaves.unshift(this.leafFactory.buildLeaf({
                 translation: {
                     x: this.x,
-                    y: this.y - this.stemRadius,
+                    y: this.y - this.stemRadius + this.stemOffset * i,
                 },
                 rotation: {
                     angle: this.angle * i,
-                    offsetY: this.stemRadius
+                    offsetY: this.stemRadius - this.stemOffset * i
                 }
-            });
+            }));
 
-        return plant;
+        return leaves.join('');
     }
 }
 
