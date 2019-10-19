@@ -1,0 +1,38 @@
+{
+  "name": "succulents",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "watch": "watchify -t brfs ./src/index.js -o public/bundle.js -t [ babelify --presets [ \"@babel/preset-env\"] ]"
+  },
+  "author": "boonnick@hotmail.com",
+  "license": "ISC",
+  "eslintConfig": {
+    "env": {
+      "browser": true,
+      "node": true,
+      "es6": true
+    },
+    "rules": {
+      "quotes": [
+        "error",
+        "single"
+      ],
+      "semi": [
+        "error",
+        "always"
+      ]
+    }
+  },
+  "devDependencies": {
+    "@babel/core": "^7.0.0-beta.51",
+    "@babel/preset-env": "^7.0.0-beta.51",
+    "babelify": "^9.0.0",
+    "brfs": "^2.0.2",
+    "tape": "^4.9.1",
+    "watchify": "^3.11.0",
+    "xml2js": "^0.4.19"
+  }
+}
