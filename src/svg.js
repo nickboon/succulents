@@ -6,7 +6,7 @@ class Elements {
         stroke = '#000',
         fontSize = 10,
         textAnchor = 'left',
-        fill = 'none'
+        fill = '#fff'
     } = {}) {
         defaults.set(this, {
             opacity,
