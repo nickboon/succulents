@@ -1,6 +1,10 @@
 const LeafFactory = require('./leafFactory');
 
+const _options = new WeakMap();
+const _leafFactory = new WeakMap();
+
 const goldenAngleDegrees = 137.5077640500378546463487;
+const nthFibonacciNumber = (n, a = 1, b = 0) => (n === 0) ? b : nthFibonacciNumber(n - 1, a + b, a);
 
 class PlantFactory {
     constructor({
@@ -9,32 +13,71 @@ class PlantFactory {
         leafCount = 1,
         stemRadius = 10,
         stemOffset = 0,
-        angle = goldenAngleDegrees
+        angle = goldenAngleDegrees,
+        scale = .1,
+        scalePolicy = (i) => (i ? 1 + 1 / nthFibonacciNumber(i) : 1)
     } = {}) {
-        this.x = x;
-        this.y = y;
-        this.leafCount = leafCount;
-        this.stemRadius = stemRadius;
-        this.stemOffset = stemOffset;
-        this.angle = angle;
-        this.leafFactory = new LeafFactory();
+        _options.set(this, {
+            x,
+            y,
+            leafCount,
+            stemRadius,
+            stemOffset,
+            angle,
+            scalePolicy,
+            scale
+        });
+        _leafFactory.set(this, new LeafFactory());
+    }
+
+    centremarker() {
+        const {
+            x,
+            y,
+            stemRadius
+        } = _options.get(this);
+        return [
+            `<path d="M${x - stemRadius} ${y} L${x + stemRadius} ${y}" />`,
+            `<path d="M${x } ${y- stemRadius} L${x} ${y + stemRadius}" />`
+        ].join('');
     }
 
     build() {
+        const leafFactory = _leafFactory.get(this);
+        const {
+            x,
+            y,
+            leafCount,
+            stemRadius,
+            stemOffset,
+            angle,
+            scale,
+            scalePolicy
+        } = _options.get(this);
         let leaves = [];
-        for (let i = this.leafCount; i > 0; i--)
-            leaves.unshift(this.leafFactory.buildLeaf({
+        let scaleX = scale;
+        let scaleY = scale;
+        for (let i = 0; i < leafCount; i++) {
+            leaves.push(leafFactory.buildLeaf({
                 translation: {
-                    x: this.x,
-                    y: this.y - this.stemRadius + this.stemOffset * i,
+                    x,
+                    y: y - stemRadius + stemOffset * i,
                 },
                 rotation: {
-                    angle: this.angle * i,
-                    offsetY: this.stemRadius - this.stemOffset * i
+                    angle: angle * i,
+                    offsetY: stemRadius - stemOffset * i
+                },
+                scale: {
+                    x: scaleX,
+                    y: scaleY
                 }
             }));
 
-        return leaves.join('');
+            scaleX += scalePolicy(i, true) * scale;
+            scaleY += scalePolicy(i) * scale;
+        }
+
+        return leaves.reverse().join('');
     }
 }
 

@@ -14,9 +14,10 @@ const svgFactory = new SvgFactory();
 const plantFactory = new PlantFactory({
     x: window.innerWidth / 2,
     y: window.innerHeight / 2,
-    leafCount: 60,
-    stemRadius: -60,
-    angle: goldenAngleDegrees //- 1
+    leafCount: 100,
+    stemRadius: 3,
+    angle: goldenAngleDegrees + 6,
+    scale: .1
 });
 document.getElementById(svgContainerElementId).innerHTML = [
     svgFactory.openSvg(x + w + x, y + h + y),

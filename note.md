@@ -9,7 +9,6 @@
 *  plantDistributionService
 
 ## ToDO
-* Scale leaves
 * Tilt leaves
 * Colour leaves?
 
