@@ -1,10 +1,11 @@
 const LeafFactory = require('./leafFactory');
+const FibonacciSeries = require('./fibonacciSeries');
 
 const _options = new WeakMap();
 const _leafFactory = new WeakMap();
-
+//const _fibonacciSeries = new WeakMap();
 const goldenAngleDegrees = 137.5077640500378546463487;
-const nthFibonacciNumber = (n, a = 1, b = 0) => (n === 0) ? b : nthFibonacciNumber(n - 1, a + b, a);
+//const nthFibonacciNumber = (n, a = 1, b = 0) => (n === 0) ? b : nthFibonacciNumber(n - 1, a + b, a);
 
 class PlantFactory {
     constructor({
@@ -13,17 +14,21 @@ class PlantFactory {
         leafCount = 1,
         stemRadius = 10,
         stemOffset = 0,
-        angle = goldenAngleDegrees,
+        angleOffset = 0,
         scale = .1,
-        scalePolicy = (i) => (i ? 1 + 1 / nthFibonacciNumber(i) : 1)
+        scalePolicy
     } = {}) {
+        const fibonacciSeries = new FibonacciSeries();
+        const defaultScalePolicy = i => i ? 1 + 1 / fibonacciSeries.nthNumber(i) : 1;
+        scalePolicy = scalePolicy || defaultScalePolicy;
+
         _options.set(this, {
             x,
             y,
             leafCount,
             stemRadius,
             stemOffset,
-            angle,
+            angleOffset,
             scalePolicy,
             scale
         });
@@ -50,7 +55,7 @@ class PlantFactory {
             leafCount,
             stemRadius,
             stemOffset,
-            angle,
+            angleOffset,
             scale,
             scalePolicy
         } = _options.get(this);
@@ -64,7 +69,7 @@ class PlantFactory {
                     y: y - stemRadius + stemOffset * i,
                 },
                 rotation: {
-                    angle: angle * i,
+                    angle: (goldenAngleDegrees + angleOffset) * i,
                     offsetY: stemRadius - stemOffset * i
                 },
                 scale: {

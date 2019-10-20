@@ -14,7 +14,7 @@ const svgFactory = new SvgFactory();
 const plantFactory = new PlantFactory({
     x: window.innerWidth / 2,
     y: window.innerHeight / 2,
-    leafCount: 100,
+    leafCount: 50,
     stemRadius: 3,
     angle: goldenAngleDegrees + 6,
     scale: .1
