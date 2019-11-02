@@ -2,8 +2,6 @@ const SvgFactory = require('./svg');
 const PlantFactory = require('./plantFactory');
 const SvgUi = require('./svgUi');
 
-const goldenAngleDegrees = 137.5077640500378546463487;
-
 // svg varaiables
 const svgContainerElementId = 'succulents';
 const h = 400;
@@ -14,10 +12,11 @@ const svgFactory = new SvgFactory();
 const plantFactory = new PlantFactory({
     x: window.innerWidth / 2,
     y: window.innerHeight / 2,
-    leafCount: 50,
-    stemRadius: 3,
-    angle: goldenAngleDegrees + 6,
-    scale: .1
+    //leafCount: 10,
+    //stemRadius: 40,
+    //angleOffset: 0,
+    //leafLength: 1,
+    //leafWidth: 1
 });
 document.getElementById(svgContainerElementId).innerHTML = [
     svgFactory.openSvg(x + w + x, y + h + y),

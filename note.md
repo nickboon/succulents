@@ -9,6 +9,9 @@
 *  plantDistributionService
 
 ## ToDO
-* Tilt leaves
-* Colour leaves?
+* Colour leaves
+* Add UI
+* Randomize
+* Multiple plants
+* 3d leaf model
 

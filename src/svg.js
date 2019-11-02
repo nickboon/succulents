@@ -2,7 +2,7 @@ const defaults = new WeakMap();
 
 class Elements {
     constructor({
-        opacity = 0.5,
+        opacity = 1,
         stroke = '#000',
         fontSize = 10,
         textAnchor = 'left',
@@ -39,12 +39,12 @@ class Elements {
         text,
         point, {
             opacity = defaults.get(this).opacity,
-            colour = defaults.get(this).colour,
+            colour = defaults.get(this).stroke,
             fontSize = defaults.get(this).fontSize,
             textAnchor = defaults.get(this).textAnchor,
         } = {}
     ) {
-        return `<text x="${point.x}" y="${point.y}" fill="${colour}" opacity="${opacity}" text-anchor="${textAnchor}" font-size="${fontSize}">${text}</text>`;
+        return `<text x="${point.x}" y="${point.y}" fill="${colour}" stroke="none" opacity="${opacity}" text-anchor="${textAnchor}" font-size="${fontSize}" font-family="Arial, Helvetica, sans-serif">${text}</text>`;
     };
 
     line(pointA, pointB, colour = defaults.get(this).colour, opacity = defaults.get(this).opacity) {

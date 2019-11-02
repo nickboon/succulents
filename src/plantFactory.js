@@ -1,37 +1,54 @@
 const LeafFactory = require('./leafFactory');
-const FibonacciSeries = require('./fibonacciSeries');
+const Trigonometry = require('./trigonometry');
+const svgFactory = require('./svg');
+const ScalePolicy = require('./scalePolicy');
 
 const _options = new WeakMap();
 const _leafFactory = new WeakMap();
-//const _fibonacciSeries = new WeakMap();
 const goldenAngleDegrees = 137.5077640500378546463487;
-//const nthFibonacciNumber = (n, a = 1, b = 0) => (n === 0) ? b : nthFibonacciNumber(n - 1, a + b, a);
 
+/*
+    leaf angles
+    ===========
+
+        90
+        |
+    180 --- 0
+        |
+       270
+*/
 class PlantFactory {
     constructor({
+        addCentreMarker = false,
+        addLabel = true,
         x = 0,
         y = 0,
-        leafCount = 1,
-        stemRadius = 10,
-        stemOffset = 0,
+        leafCount = 20,
+        stemRadius = 0,
         angleOffset = 0,
-        scale = .1,
-        scalePolicy
+        leafLength = 1,
+        leafWidth = 1,
+        startLeafAngle = 90,
+        endLeafAngle = 200,
+        leafAngleIncrements = 72,
+        scalePolicy = new ScalePolicy().noScale()
     } = {}) {
-        const fibonacciSeries = new FibonacciSeries();
-        const defaultScalePolicy = i => i ? 1 + 1 / fibonacciSeries.nthNumber(i) : 1;
-        scalePolicy = scalePolicy || defaultScalePolicy;
-
         _options.set(this, {
+            addCentreMarker,
+            addLabel,
             x,
             y,
             leafCount,
             stemRadius,
-            stemOffset,
             angleOffset,
             scalePolicy,
-            scale
+            leafLength,
+            leafWidth,
+            startLeafAngle,
+            endLeafAngle,
+            leafAngleIncrements
         });
+
         _leafFactory.set(this, new LeafFactory());
     }
 
@@ -47,42 +64,86 @@ class PlantFactory {
         ].join('');
     }
 
+    label() {
+        const options = _options.get(this);
+        return new svgFactory().text(
+            Object.keys(options).map(key => `${key}: ${options[key]}`).join(', ') + '.', {
+                x: 50,
+                y: 12
+            }
+        );
+    }
+
     build() {
         const leafFactory = _leafFactory.get(this);
         const {
+            addCentreMarker,
+            addLabel,
             x,
             y,
             leafCount,
             stemRadius,
-            stemOffset,
             angleOffset,
-            scale,
+            leafLength,
+            leafWidth,
+            startLeafAngle,
+            endLeafAngle,
+            leafAngleIncrements,
             scalePolicy
         } = _options.get(this);
+        const trigTable = new Trigonometry(leafAngleIncrements);
+        const maxDegrees = 360;
+        const startAngleIncrement = leafAngleIncrements * startLeafAngle / maxDegrees;
+        const endAngleIncrements = leafAngleIncrements * endLeafAngle / maxDegrees;
+        const range = endAngleIncrements - startAngleIncrement;
+
+        let scaleX = leafLength;
+        let scaleY = leafLength;
+        let angleIncrement = startAngleIncrement;
         let leaves = [];
-        let scaleX = scale;
-        let scaleY = scale;
+
+        if (scalePolicy.toString() !== new ScalePolicy().noScale().toString()) {
+            scaleY /= 10;
+            scaleX /= 10;
+        }
+
         for (let i = 0; i < leafCount; i++) {
-            leaves.push(leafFactory.buildLeaf({
+            const angle = trigTable.getAngle(angleIncrement);
+            const tiltScale = -angle.cos;
+            const z = angle.sin;
+            const svg = leafFactory.buildLeaf({
                 translation: {
                     x,
-                    y: y - stemRadius + stemOffset * i,
+                    y: y - stemRadius,
                 },
                 rotation: {
-                    angle: (goldenAngleDegrees + angleOffset) * i,
-                    offsetY: stemRadius - stemOffset * i
+                    angle: (goldenAngleDegrees + angleOffset) *
+                        i,
+                    offsetY: stemRadius
                 },
                 scale: {
                     x: scaleX,
-                    y: scaleY
-                }
-            }));
+                    y: scaleY * tiltScale
+                },
+            });
+            leaves.push({
+                svg,
+                z
+            });
 
-            scaleX += scalePolicy(i, true) * scale;
-            scaleY += scalePolicy(i) * scale;
+            scaleX += scalePolicy(i) * leafWidth;
+            scaleY += scalePolicy(i) * leafLength;
+
+            if (i < range) angleIncrement += 1;
         }
 
-        return leaves.reverse().join('');
+        return leaves
+            .reverse()
+            .sort((a, b) => (a.z > b.z) ? 1 : ((b.z > a.z) ? -1 : 0))
+            .map(leaf => leaf.svg)
+            .join('') +
+            (addLabel ? this.label() : '') +
+            (addCentreMarker ? this.centremarker() : '');
     }
 }
 
