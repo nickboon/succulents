@@ -2,6 +2,8 @@ const LeafFactory = require('./leafFactory');
 const Trigonometry = require('./trigonometry');
 const svgFactory = require('./svg');
 const ScalePolicy = require('./scalePolicy');
+const ColourPolicy = require('./colourPolicy');
+const Colour = require('./colour');
 
 const _options = new WeakMap();
 const _leafFactory = new WeakMap();
@@ -23,15 +25,20 @@ class PlantFactory {
         addLabel = true,
         x = 0,
         y = 0,
-        leafCount = 20,
-        stemRadius = 0,
+        leafCount = 100,
+        stemRadius = 10,
         angleOffset = 0,
-        leafLength = 1,
-        leafWidth = 1,
-        startLeafAngle = 90,
-        endLeafAngle = 200,
-        leafAngleIncrements = 72,
-        scalePolicy = new ScalePolicy().noScale()
+        leafLength = .5,
+        leafWidth = .5,
+        startLeafAngle = 0,
+        endLeafAngle = 270,
+        leafAngleIncrements = 90,
+        scalePolicy = new ScalePolicy().inverseFibonacci(),
+        stroke = Colour.green,
+        fill = Colour.white,
+        strokeColourPolicy = ColourPolicy.constant,
+        fillColourPolicy = ColourPolicy.constant,
+        opacity = 1
     } = {}) {
         _options.set(this, {
             addCentreMarker,
@@ -46,7 +53,12 @@ class PlantFactory {
             leafWidth,
             startLeafAngle,
             endLeafAngle,
-            leafAngleIncrements
+            leafAngleIncrements,
+            stroke,
+            fill,
+            strokeColourPolicy,
+            fillColourPolicy,
+            opacity
         });
 
         _leafFactory.set(this, new LeafFactory());
@@ -89,7 +101,12 @@ class PlantFactory {
             startLeafAngle,
             endLeafAngle,
             leafAngleIncrements,
-            scalePolicy
+            scalePolicy,
+            stroke,
+            fill,
+            strokeColourPolicy,
+            fillColourPolicy,
+            opacity
         } = _options.get(this);
         const trigTable = new Trigonometry(leafAngleIncrements);
         const maxDegrees = 360;
@@ -101,6 +118,8 @@ class PlantFactory {
         let scaleY = leafLength;
         let angleIncrement = startAngleIncrement;
         let leaves = [];
+        let currentStroke = stroke;
+        let currentFill = fill;
 
         if (scalePolicy.toString() !== new ScalePolicy().noScale().toString()) {
             scaleY /= 10;
@@ -125,6 +144,9 @@ class PlantFactory {
                     x: scaleX,
                     y: scaleY * tiltScale
                 },
+                stroke: currentStroke,
+                fill: currentFill,
+                opacity
             });
             leaves.push({
                 svg,
@@ -133,6 +155,8 @@ class PlantFactory {
 
             scaleX += scalePolicy(i) * leafWidth;
             scaleY += scalePolicy(i) * leafLength;
+            currentStroke = strokeColourPolicy(currentStroke);
+            currentFill = fillColourPolicy(currentFill);
 
             if (i < range) angleIncrement += 1;
         }

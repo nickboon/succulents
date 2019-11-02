@@ -11,12 +11,7 @@ const y = 100;
 const svgFactory = new SvgFactory();
 const plantFactory = new PlantFactory({
     x: window.innerWidth / 2,
-    y: window.innerHeight / 2,
-    //leafCount: 10,
-    //stemRadius: 40,
-    //angleOffset: 0,
-    //leafLength: 1,
-    //leafWidth: 1
+    y: window.innerHeight / 2
 });
 document.getElementById(svgContainerElementId).innerHTML = [
     svgFactory.openSvg(x + w + x, y + h + y),
