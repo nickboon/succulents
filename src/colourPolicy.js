@@ -1,15 +1,9 @@
-class ColourPolicy {
-    static get constant() {
-        return colour => colour;
-    }
-
-    static get greenToRed() {
-        return (colour, rate = 0) => colour.add(rate, -rate);
-    }
-
-    static get greenToBlue() {
-        return (colour, rate = 0) => colour.add(0, -rate, rate);
-    }
-}
-
-module.exports = ColourPolicy;
+export default {
+	constant: colour => colour,
+	greenToRed: (colour, rate = 0) => {
+		if (colour && colour.add) return colour.add(rate, Math.floor(-rate / 2));
+	},
+	greenToBlue: (colour, rate = 0) => {
+		if (colour && colour.add) return colour.add(0, -rate, Math.floor(rate / 2));
+	}
+};

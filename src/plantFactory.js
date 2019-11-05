@@ -10,34 +10,49 @@ const _leafFactory = new WeakMap();
 const goldenAngleDegrees = 137.5077640500378546463487;
 
 /*
-    leaf angles
+    leaf tilt
     ===========
 
-        90
-        |
-    180 --- 0
-        |
-       270
+        			1/4 full range
+        			 |
+    1/2 full range ----- 0
+        			 |
+       				270 full range
 */
 export default class PlantFactory {
+	static get defaultTiltFullRange() {
+		return 72;
+	}
+
+	static get defaultTiltMax() {
+		return PlantFactory.calculateLeafTiltLimit(
+			PlantFactory.defaultTiltFullRange
+		);
+	}
+
+	static calculateLeafTiltLimit(fullRange) {
+		return Math.floor(fullRange * 0.75);
+	}
+
 	constructor({
 		addCentreMarker = false,
 		addLabel = true,
 		x = 0,
 		y = 0,
-		leafCount = 100,
+		leafCount = 50,
 		stemRadius = 10,
 		angleOffset = 0,
 		leafLength = 0.5,
 		leafWidth = 0.5,
-		startLeafAngle = 0,
-		endLeafAngle = 270,
-		leafAngleIncrements = 90,
+		leafTiltFullRange = PlantFactory.defaultTiltFullRange,
+		leafTiltMin = 0,
+		leafTiltMax = PlantFactory.defaultTiltMax,
 		scalePolicy = new ScalePolicy().inverseFibonacci(),
-		stroke = Colour.green,
-		fill = Colour.white,
+		stroke = Colour.definedColours.green,
+		fill = Colour.definedColours.white,
 		strokeColourPolicy = ColourPolicy.constant,
 		fillColourPolicy = ColourPolicy.constant,
+		colourChangeRate = 2,
 		opacity = 1
 	} = {}) {
 		_options.set(this, {
@@ -51,13 +66,14 @@ export default class PlantFactory {
 			scalePolicy,
 			leafLength,
 			leafWidth,
-			startLeafAngle,
-			endLeafAngle,
-			leafAngleIncrements,
+			leafTiltMin,
+			leafTiltMax,
+			leafTiltFullRange,
 			stroke,
 			fill,
 			strokeColourPolicy,
 			fillColourPolicy,
+			colourChangeRate,
 			opacity
 		});
 
@@ -97,27 +113,22 @@ export default class PlantFactory {
 			angleOffset,
 			leafLength,
 			leafWidth,
-			startLeafAngle,
-			endLeafAngle,
-			leafAngleIncrements,
+			leafTiltFullRange,
+			leafTiltMin,
+			leafTiltMax,
 			scalePolicy,
 			stroke,
 			fill,
 			strokeColourPolicy,
 			fillColourPolicy,
+			colourChangeRate,
 			opacity
 		} = _options.get(this);
-		const trigTable = new Trigonometry(leafAngleIncrements);
-		const maxDegrees = 360;
-		const startAngleIncrement =
-			(leafAngleIncrements * startLeafAngle) / maxDegrees;
-		const endAngleIncrements =
-			(leafAngleIncrements * endLeafAngle) / maxDegrees;
-		const range = endAngleIncrements - startAngleIncrement;
-
+		const trigTable = new Trigonometry(leafTiltFullRange);
+		const leafTiltRange = leafTiltMax - leafTiltMin;
 		let scaleX = leafLength;
 		let scaleY = leafLength;
-		let angleIncrement = startAngleIncrement;
+		let leafTilt = leafTiltMin;
 		let leaves = [];
 		let currentStroke = stroke;
 		let currentFill = fill;
@@ -128,7 +139,7 @@ export default class PlantFactory {
 		}
 
 		for (let i = 0; i < leafCount; i++) {
-			const angle = trigTable.getAngle(angleIncrement);
+			const angle = trigTable.getAngle(leafTilt);
 			const tiltScale = -angle.cos;
 			const z = angle.sin;
 			const svg = leafFactory.buildLeaf({
@@ -155,10 +166,10 @@ export default class PlantFactory {
 
 			scaleX += scalePolicy(i) * leafWidth;
 			scaleY += scalePolicy(i) * leafLength;
-			currentStroke = strokeColourPolicy(currentStroke);
-			currentFill = fillColourPolicy(currentFill);
+			currentStroke = strokeColourPolicy(currentStroke, colourChangeRate);
+			currentFill = fillColourPolicy(currentFill, colourChangeRate);
 
-			if (i < range) angleIncrement += 1;
+			if (i < leafTiltRange) leafTilt += 1;
 		}
 
 		return (
