@@ -2,8 +2,12 @@
 	export let svg = null;
 	export let prefix = document.title;
 
+	const declartation = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>';
+
 	$: attributes = {
-		href: `data:application/octet-stream,${encodeURIComponent(svg)}`,
+		href: `data:application/octet-stream,${encodeURIComponent(
+			declartation + svg
+		)}`,
 		download: `${prefix}_${Date.now()}.svg`
 	};
 </script>

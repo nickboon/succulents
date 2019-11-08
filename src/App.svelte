@@ -1,6 +1,6 @@
 <script>
+	import Svg from './Svg.svelte';
 	import SvgDownloadLink from './SvgDownloadLink.svelte';
-	import SvgFactory from './svg';
 	import PlantFactory from './plantFactory';
 	import Colour from './colour';
 	import ColourPolicy from './colourPolicy';
@@ -9,8 +9,8 @@
 	const colourPolicyKeys = Object.keys(ColourPolicy);
 
 	// svg varaiables
-	const w = window.innerWidth * 0.6;
-	const h = window.innerHeight;
+	const width = window.innerWidth * 0.6;
+	const height = window.innerHeight;
 
 	let leafCount = 60;
 	let leafWidth = 0.5;
@@ -31,7 +31,7 @@
 	$: leafTiltLimit = PlantFactory.calculateLeafTiltLimit(leafTiltFullRange);
 	$: leafTiltMax = leafTiltMax > leafTiltLimit ? leafTiltLimit : leafTiltMax;
 	$: plantFactory = new PlantFactory({
-		x: w / 2,
+		x: width / 2,
 		y: window.innerHeight / 2,
 		leafCount,
 		leafWidth,
@@ -50,12 +50,8 @@
 		addLabel
 	});
 
-	const svgFactory = new SvgFactory();
-	$: svg = [
-		svgFactory.openSvg(w, h),
-		plantFactory.build(),
-		svgFactory.closeSvg()
-	].join('');
+	$: paths = plantFactory.build();
+	let svgPanel = {};
 </script>
 
 <style>
@@ -79,7 +75,7 @@
 		border-right: 1px solid #555;
 		padding: 1em;
 	}
-	#svg {
+	.svgPanel {
 		flex: 61.8%;
 		overflow: hidden;
 	}
@@ -224,12 +220,16 @@
 				<h3>SVG</h3>
 				<label for="addLabel">Annotate</label>
 				<input id="addLabel" type="checkbox" bind:checked={addLabel} />
-				<SvgDownloadLink {svg} />
+				<SvgDownloadLink svg={svgPanel.innerHTML} />
 			</div>
 		</div>
-
-		<div id="svg">
-			{@html svg}
+		<div class="svgPanel" bind:this={svgPanel}>
+			<Svg {width} {height}>
+				<!-- Need to wrap in group otherwise paths mangled -->
+				<g>
+					{@html paths}
+				</g>
+			</Svg>
 		</div>
 		<div style="clear:both;" />
 	</div>
