@@ -17,6 +17,9 @@ export default class Elements {
 		});
 	}
 
+	declaration() {
+		return '<?xml version="1.0" encoding="UTF-8" standalone="no"?>';
+	}
 	openSvg(
 		width,
 		height,
@@ -25,8 +28,6 @@ export default class Elements {
 		fill = defaults.get(this).fill
 	) {
 		return [
-			'<?xml version="1.0" encoding="UTF-8" standalone="no"?>',
-			'<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">',
 			'<svg',
 			[
 				'\tversion="1.1"',
