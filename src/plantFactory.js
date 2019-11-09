@@ -95,7 +95,7 @@ export default class PlantFactory {
 				.map(key => `${key}: ${options[key]}`)
 				.join(', ') + '.',
 			{
-				x: 50,
+				x: 0,
 				y: 12
 			}
 		);

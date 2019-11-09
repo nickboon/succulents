@@ -63,21 +63,21 @@
 		color: #555;
 		margin: 28px;
 	}
-	h1 {
+	header,
+	footer {
 		border: 1px solid #555;
 		margin-bottom: 0px;
-		padding: 0.6em 1em;
+		padding: 0 1em 0.6em;
 	}
-	#content {
+	.row {
 		display: flex;
 		border-right: 1px solid #555;
 		border-left: 1px solid #555;
-		border-bottom: 1px solid #555;
 	}
 	#options {
 		flex: 38.2%;
 		border-right: 1px solid #555;
-		padding: 1em;
+		padding: 0 1em 1em;
 	}
 	#svg {
 		flex: 61.8%;
@@ -95,16 +95,22 @@
 	select#fillColourPolicy {
 		width: 7em;
 	}
+
+	.options-row {
+		margin-bottom: 0.5em;
+	}
 </style>
 
 <div id="app">
-	<h1>Succulent SVG Generator</h1>
-	<div id="content">
+	<header>
+		<h1>Succulent SVG Generator</h1>
+	</header>
+	<div class="row">
 		<div id="options">
 			<h2>Options</h2>
 			<div>
 				<h3>Leaf</h3>
-				<div>
+				<div class="options-row">
 					<label for="leafWidth">Width</label>
 					<input
 						id="leafWidth"
@@ -120,7 +126,7 @@
 						min="0"
 						bind:value={leafLength} />
 				</div>
-				<div>
+				<div class="options-row">
 					<label for="leafCount">Count</label>
 					<input id="leafCount" type="number" min="0" bind:value={leafCount} />
 					<label for="angleOffset">Rotation</label>
@@ -130,7 +136,7 @@
 						step="0.1"
 						bind:value={angleOffset} />
 				</div>
-				<div>
+				<div class="options-row">
 					<label for="stemRadius">Stem Radius</label>
 					<input
 						id="stemRadius"
@@ -139,7 +145,7 @@
 						bind:value={stemRadius} />
 				</div>
 				<h4>Tilt</h4>
-				<div>
+				<div class="options-row">
 					<label for="leafTiltMin">Min</label>
 					<input
 						id="leafTiltMin"
@@ -155,7 +161,7 @@
 						max={leafTiltLimit}
 						bind:value={leafTiltMax} />
 				</div>
-				<div>
+				<div class="options-row">
 					<label for="leafTiltFullRange">Steps</label>
 					<input
 						id="leafTiltFullRange"
@@ -166,7 +172,7 @@
 			</div>
 			<div>
 				<h3>Colour</h3>
-				<div>
+				<div class="options-row">
 					<label for="strokeColour">Stroke</label>
 					<select
 						id="strokeColour"
@@ -185,7 +191,7 @@
 						{/each}
 					</select>
 				</div>
-				<div>
+				<div class="options-row">
 					<label for="fillColour">Fill</label>
 					<select
 						id="fillColour"
@@ -224,13 +230,15 @@
 				<h3>SVG</h3>
 				<label for="addLabel">Annotate</label>
 				<input id="addLabel" type="checkbox" bind:checked={addLabel} />
-				<SvgDownloadLink {svg} />
 			</div>
 		</div>
-
 		<div id="svg">
 			{@html svg}
 		</div>
-		<div style="clear:both;" />
 	</div>
+	<footer>
+		<h2>
+			<SvgDownloadLink {svg} />
+		</h2>
+	</footer>
 </div>
