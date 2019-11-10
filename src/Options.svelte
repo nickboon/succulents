@@ -2,34 +2,64 @@
 	import PlantFactory from './plantFactory';
 	import Colour from './colour';
 	import ColourPolicy from './colourPolicy';
+	import defaults from './defaults.js';
 
 	export let paths;
 	export let svgWidth;
 	export let svgHeight;
 
+	function reset() {
+		x = defaults.x;
+		y = defaults.y;
+		leafCount = defaults.leafCount;
+		leafWidth = defaults.leafWidth;
+		leafLength = defaults.leafLength;
+		angleOffset = defaults.angleOffset;
+		stemRadius = defaults.stemRadius;
+		leafTiltFullRange = defaults.leafTiltFullRange;
+		leafTiltMax = defaults.leafTiltMax;
+		leafTiltMin = defaults.leafTiltMin;
+		strokeColourKey = defaults.strokeColourKey;
+		fillColourKey = defaults.fillColourKey;
+		strokeColourPolicyKey = defaults.strokeColourPolicyKey;
+		fillColourPolicyKey = defaults.fillColourPolicyKey;
+		colourChangeRate = defaults.colourChangeRate;
+		opacity = defaults.opacity;
+		addLabel = defaults.addLabel;
+	}
 	const definedColourKeys = Object.keys(Colour.definedColours);
 	const colourPolicyKeys = Object.keys(ColourPolicy);
-	let leafCount = 60;
-	let leafWidth = 0.5;
-	let leafLength = 0.5;
-	let angleOffset = 0;
-	let stemRadius = 10;
-	let leafTiltFullRange = 100;
-	let leafTiltMax = PlantFactory.calculateLeafTiltLimit(leafTiltFullRange);
-	let leafTiltMin = 0;
-	let stroke = Colour.definedColours.green;
-	let fill = Colour.definedColours.white;
-	let strokeColourPolicy = ColourPolicy.constant;
-	let fillColourPolicy = ColourPolicy.constant;
-	let colourChangeRate = 1;
-	let opacity = 1;
-	let addLabel = true;
+
+	defaults.leafTiltMax = PlantFactory.calculateLeafTiltLimit(
+		defaults.leafTiltFullRange
+	);
+	defaults.x = svgWidth / 2;
+	defaults.y = svgHeight / 2;
+	let {
+		x,
+		y,
+		leafCount,
+		leafWidth,
+		leafLength,
+		angleOffset,
+		stemRadius,
+		leafTiltFullRange,
+		leafTiltMax,
+		leafTiltMin,
+		strokeColourKey,
+		fillColourKey,
+		strokeColourPolicyKey,
+		fillColourPolicyKey,
+		colourChangeRate,
+		opacity,
+		addLabel
+	} = defaults;
 
 	$: leafTiltLimit = PlantFactory.calculateLeafTiltLimit(leafTiltFullRange);
 	$: leafTiltMax = leafTiltMax > leafTiltLimit ? leafTiltLimit : leafTiltMax;
 	$: plantFactory = new PlantFactory({
-		x: svgWidth / 2,
-		y: svgHeight / 2,
+		x,
+		y,
 		leafCount,
 		leafWidth,
 		leafLength,
@@ -38,10 +68,10 @@
 		leafTiltMin,
 		leafTiltMax,
 		leafTiltFullRange,
-		stroke,
-		fill,
-		strokeColourPolicy,
-		fillColourPolicy,
+		strokeColourKey,
+		fillColourKey,
+		strokeColourPolicyKey,
+		fillColourPolicyKey,
 		colourChangeRate,
 		opacity,
 		addLabel
@@ -51,6 +81,11 @@
 </script>
 
 <style>
+	h2 button {
+		font-size: inherit;
+		font-weight: inherit;
+		border: none;
+	}
 	label {
 		width: 6em;
 	}
@@ -65,7 +100,10 @@
 	}
 </style>
 
-<h2>Options</h2>
+<h2>
+	Options
+	<button on:click={reset}>&circlearrowright;</button>
+</h2>
 <div>
 	<h3>Leaf</h3>
 	<div>
@@ -127,17 +165,15 @@
 		<select
 			id="strokeColour"
 			class="colour"
-			bind:value={stroke}
-			style="background:{stroke.hexString};">
+			bind:value={strokeColourKey}
+			style="background:{strokeColourKey};">
 			{#each definedColourKeys as colourKey}
-				<option
-					value={Colour.definedColours[colourKey]}
-					style="background:{colourKey};" />
+				<option value={colourKey} style="background:{colourKey};" />
 			{/each}
 		</select>
-		<select id="strokeColourPolicy" bind:value={strokeColourPolicy}>
+		<select id="strokeColourPolicy" bind:value={strokeColourPolicyKey}>
 			{#each colourPolicyKeys as policyKey}
-				<option value={ColourPolicy[policyKey]}>{policyKey}</option>
+				<option value={policyKey}>{policyKey}</option>
 			{/each}
 		</select>
 	</div>
@@ -146,18 +182,16 @@
 		<select
 			id="fillColour"
 			class="colour"
-			style="background:{fill.hexString || 'white'};"
-			bind:value={fill}>
+			style="background:{fillColourKey || 'white'};"
+			bind:value={fillColourKey}>
 			{#each definedColourKeys as colourKey}
-				<option
-					value={Colour.definedColours[colourKey]}
-					style="background:{Colour.definedColours[colourKey].hexString};" />
+				<option value={colourKey} style="background:{colourKey};" />
 			{/each}
-			<option value={{}} style="background:white">&empty;</option>
+			<option value={{}} style="background:white">&boxtimes;</option>
 		</select>
-		<select id="fillColourPolicy" bind:value={fillColourPolicy}>
+		<select id="fillColourPolicy" bind:value={fillColourPolicyKey}>
 			{#each colourPolicyKeys as policyKey}
-				<option value={ColourPolicy[policyKey]}>{policyKey}</option>
+				<option value={policyKey}>{policyKey}</option>
 			{/each}
 		</select>
 	</div>

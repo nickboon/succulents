@@ -8,4 +8,18 @@
 	};
 </script>
 
-<a href={attributes.href} download={attributes.download}>Download</a>
+<style>
+	label {
+		width: 6em;
+	}
+</style>
+
+<div>
+	<h2>
+		<a href={attributes.href} download={attributes.download}>Download</a>
+	</h2>
+</div>
+<div>
+	<label for="prefix">Prefix</label>
+	<input id="prefix" type="text" bind:value={prefix} />
+</div>

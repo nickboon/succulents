@@ -48,10 +48,10 @@ export default class PlantFactory {
 		leafTiltMin = 0,
 		leafTiltMax = PlantFactory.defaultTiltMax,
 		scalePolicy = new ScalePolicy().inverseFibonacci(),
-		stroke = Colour.definedColours.green,
-		fill = Colour.definedColours.white,
-		strokeColourPolicy = ColourPolicy.constant,
-		fillColourPolicy = ColourPolicy.constant,
+		strokeColourKey = 'green',
+		fillColourKey = 'white',
+		strokeColourPolicyKey = 'constant',
+		fillColourPolicyKey = 'constant',
 		colourChangeRate = 2,
 		opacity = 1
 	} = {}) {
@@ -69,10 +69,10 @@ export default class PlantFactory {
 			leafTiltMin,
 			leafTiltMax,
 			leafTiltFullRange,
-			stroke,
-			fill,
-			strokeColourPolicy,
-			fillColourPolicy,
+			strokeColourKey,
+			fillColourKey,
+			strokeColourPolicyKey,
+			fillColourPolicyKey,
 			colourChangeRate,
 			opacity
 		});
@@ -117,10 +117,10 @@ export default class PlantFactory {
 			leafTiltMin,
 			leafTiltMax,
 			scalePolicy,
-			stroke,
-			fill,
-			strokeColourPolicy,
-			fillColourPolicy,
+			strokeColourKey,
+			fillColourKey,
+			strokeColourPolicyKey,
+			fillColourPolicyKey,
 			colourChangeRate,
 			opacity
 		} = _options.get(this);
@@ -130,8 +130,8 @@ export default class PlantFactory {
 		let scaleY = leafLength;
 		let leafTilt = leafTiltMin;
 		let leaves = [];
-		let currentStroke = stroke;
-		let currentFill = fill;
+		let currentStroke = Colour.definedColours[strokeColourKey];
+		let currentFill = Colour.definedColours[fillColourKey];
 
 		if (scalePolicy.toString() !== new ScalePolicy().noScale().toString()) {
 			scaleY /= 10;
@@ -166,8 +166,15 @@ export default class PlantFactory {
 
 			scaleX += scalePolicy(i) * leafWidth;
 			scaleY += scalePolicy(i) * leafLength;
-			currentStroke = strokeColourPolicy(currentStroke, colourChangeRate);
-			currentFill = fillColourPolicy(currentFill, colourChangeRate);
+
+			currentStroke = ColourPolicy[strokeColourPolicyKey](
+				currentStroke,
+				colourChangeRate
+			);
+			currentFill = ColourPolicy[fillColourPolicyKey](
+				currentFill,
+				colourChangeRate
+			);
 
 			if (i < leafTiltRange) leafTilt += 1;
 		}

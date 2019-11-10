@@ -22,7 +22,7 @@ export default class Colour {
 			green: new Colour(0, 128, 0),
 			limeGreen: new Colour(50, 205, 50),
 			greenYellow: new Colour(173, 255, 47),
-			yellowgGreen: new Colour(154, 205, 50),
+			yellowGreen: new Colour(154, 205, 50),
 			darkSeaGreen: new Colour(143, 188, 143),
 			mediumSeaGreen: new Colour(60, 179, 113),
 			seaGreen: new Colour(46, 139, 87),

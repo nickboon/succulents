@@ -52,8 +52,6 @@
 		</div>
 	</div>
 	<footer>
-		<h2>
-			<SvgDownloadLink svg={svgFile} />
-		</h2>
+		<SvgDownloadLink svg={svgFile} />
 	</footer>
 </div>
