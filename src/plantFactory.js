@@ -47,7 +47,7 @@ export default class PlantFactory {
 		leafTiltFullRange = PlantFactory.defaultTiltFullRange,
 		leafTiltMin = 0,
 		leafTiltMax = PlantFactory.defaultTiltMax,
-		scalePolicy = new ScalePolicy().inverseFibonacci(),
+		scalePolicyKey = 'inverseFibonacci',
 		strokeColourKey = 'green',
 		fillColourKey = 'white',
 		strokeColourPolicyKey = 'constant',
@@ -63,7 +63,7 @@ export default class PlantFactory {
 			leafCount,
 			stemRadius,
 			angleOffset,
-			scalePolicy,
+			scalePolicyKey,
 			leafLength,
 			leafWidth,
 			leafTiltMin,
@@ -116,7 +116,7 @@ export default class PlantFactory {
 			leafTiltFullRange,
 			leafTiltMin,
 			leafTiltMax,
-			scalePolicy,
+			scalePolicyKey,
 			strokeColourKey,
 			fillColourKey,
 			strokeColourPolicyKey,
@@ -132,7 +132,7 @@ export default class PlantFactory {
 		let leaves = [];
 		let currentStroke = Colour.definedColours[strokeColourKey];
 		let currentFill = Colour.definedColours[fillColourKey];
-
+		let scalePolicy = new ScalePolicy()[scalePolicyKey]();
 		if (scalePolicy.toString() !== new ScalePolicy().noScale().toString()) {
 			scaleY /= 10;
 			scaleX /= 10;

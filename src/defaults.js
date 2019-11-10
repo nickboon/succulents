@@ -9,6 +9,7 @@ export default {
 	leafTiltFullRange: 100,
 	leafTiltMax: 0,
 	leafTiltMin: 0,
+	scalePolicyKey: 'inverseFibonacci',
 	strokeColourKey: 'green',
 	fillColourKey: 'white',
 	strokeColourPolicy: 'constant',

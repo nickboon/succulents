@@ -2,6 +2,7 @@
 	import PlantFactory from './plantFactory';
 	import Colour from './colour';
 	import ColourPolicy from './colourPolicy';
+	import ScalePolicy from './scalePolicy.js';
 	import defaults from './defaults.js';
 
 	export let paths;
@@ -19,6 +20,7 @@
 		leafTiltFullRange = defaults.leafTiltFullRange;
 		leafTiltMax = defaults.leafTiltMax;
 		leafTiltMin = defaults.leafTiltMin;
+		scalePolicyKey = defaults.scalePolicyKey;
 		strokeColourKey = defaults.strokeColourKey;
 		fillColourKey = defaults.fillColourKey;
 		strokeColourPolicyKey = defaults.strokeColourPolicyKey;
@@ -29,6 +31,9 @@
 	}
 	const definedColourKeys = Object.keys(Colour.definedColours);
 	const colourPolicyKeys = Object.keys(ColourPolicy);
+	const scalePolicyKeys = Object.getOwnPropertyNames(
+		Object.getPrototypeOf(new ScalePolicy())
+	).filter(name => name !== 'constructor');
 
 	defaults.leafTiltMax = PlantFactory.calculateLeafTiltLimit(
 		defaults.leafTiltFullRange
@@ -46,6 +51,7 @@
 		leafTiltFullRange,
 		leafTiltMax,
 		leafTiltMin,
+		scalePolicyKey,
 		strokeColourKey,
 		fillColourKey,
 		strokeColourPolicyKey,
@@ -68,6 +74,7 @@
 		leafTiltMin,
 		leafTiltMax,
 		leafTiltFullRange,
+		scalePolicyKey,
 		strokeColourKey,
 		fillColourKey,
 		strokeColourPolicyKey,
@@ -131,6 +138,12 @@
 	<div>
 		<label for="stemRadius">Stem Radius</label>
 		<input id="stemRadius" type="number" min="0" bind:value={stemRadius} />
+		<label for="scalePolicy">Scale Policy</label>
+		<select id="scalePolicy" bind:value={scalePolicyKey}>
+			{#each scalePolicyKeys as policyKey}
+				<option value={policyKey}>{policyKey}</option>
+			{/each}
+		</select>
 	</div>
 	<h4>Tilt</h4>
 	<div>
