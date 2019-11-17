@@ -4,11 +4,10 @@ const _fibonacciSeries = new WeakMap();
 const _defaults = new WeakMap();
 
 export default class ScalePolicyFactory {
-	constructor({ scaleModifier = 0.1, inverseMagnitude = 30 } = {}) {
+	constructor({ scaleModifier = { x: 1, y: 1 } } = {}) {
 		_fibonacciSeries.set(this, new FibonacciSeries());
 		_defaults.set(this, {
-			scaleModifier,
-			inverseMagnitude
+			scaleModifier
 		});
 	}
 
@@ -16,15 +15,18 @@ export default class ScalePolicyFactory {
 		return () => 0;
 	}
 
-	inverseFibonacci(scaleModifier = _defaults.get(this).scaleModifier) {
-		return i =>
-			(i ? 1 + 1 / _fibonacciSeries.get(this).nthNumber(i) : 1) * scaleModifier;
+	inverseIndex(scaleModifier = _defaults.get(this).scaleModifier) {
+		return (i, isX) =>
+			(i ? 1 / i : 1) * (isX ? scaleModifier.x : scaleModifier.y);
 	}
 
-	constant(
-		inverseMagnitude = _defaults.get(this).inverseMagnitude,
-		scaleModifier = _defaults.get(this).scaleModifier
-	) {
-		return i => (i / inverseMagnitude) * scaleModifier;
+	inverseFibonacci(scaleModifier = _defaults.get(this).scaleModifier) {
+		return (i, isX) =>
+			(i ? 1 / _fibonacciSeries.get(this).nthNumber(i) : 1) *
+			(isX ? scaleModifier.x : scaleModifier.y);
+	}
+
+	constant() {
+		return () => 0;
 	}
 }

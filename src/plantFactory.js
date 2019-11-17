@@ -1,3 +1,15 @@
+/*
+On the mystery of the golden angle in phyllotaxis S. KING, F. BECK, U. LÜTTGE
+https://onlinelibrary.wiley.com/doi/full/10.1111/j.1365-3040.2004.01185.x
+
+Continued fraction 		First three rationals 	Asymptotic 	divergence angle (°) 	Series classification
+[0,2,1,1, ...] 			1/2, 1/3, 2/5, ... 		137.508...	golden angle 			Schimper–Braun series
+[0,3,1,1, ...] 			1/3, 1/4; 2/7, ... 		99.502...  							Lucas series
+[0,2,2,1,1, ...] 		2/5, 3/7, 5/12, ... 	151.136... 							anomalous
+[0,3,2,1,1, ...] 		2/7, 3/10, 5/17, ... 	106.447...  						not classified
+[0,4,1,1,1, ...] 		1/4, 1/5, 2/9, ... 		77.955... 							normal
+[0,2,1,2,1,1, ...] 		3/8, 4/11, 7/19, ... 	132.178... 							not classified
+*/
 import LeafFactory from './leafFactory';
 import Trigonometry from './trigonometry';
 import svgFactory from './svg';
@@ -8,7 +20,6 @@ import Colour from './colour';
 const _options = new WeakMap();
 const _leafFactory = new WeakMap();
 const goldenAngleDegrees = 137.5077640500378546463487;
-
 /*
     leaf tilt
     ===========
@@ -48,6 +59,7 @@ export default class PlantFactory {
 		leafTiltMin = 0,
 		leafTiltMax = PlantFactory.defaultTiltMax,
 		scalePolicyKey = 'inverseFibonacci',
+		curlInnerLeaves = false,
 		strokeColourKey = 'green',
 		fillColourKey = 'white',
 		strokeColourPolicyKey = 'constant',
@@ -69,9 +81,10 @@ export default class PlantFactory {
 			leafTiltMin,
 			leafTiltMax,
 			leafTiltFullRange,
+			strokeColourPolicyKey,
+			curlInnerLeaves,
 			strokeColourKey,
 			fillColourKey,
-			strokeColourPolicyKey,
 			fillColourPolicyKey,
 			colourChangeRate,
 			opacity
@@ -109,14 +122,15 @@ export default class PlantFactory {
 			x,
 			y,
 			leafCount,
-			stemRadius,
-			angleOffset,
 			leafLength,
 			leafWidth,
+			scalePolicyKey,
+			curlInnerLeaves,
+			stemRadius,
+			angleOffset,
 			leafTiltFullRange,
 			leafTiltMin,
 			leafTiltMax,
-			scalePolicyKey,
 			strokeColourKey,
 			fillColourKey,
 			strokeColourPolicyKey,
@@ -132,10 +146,10 @@ export default class PlantFactory {
 		let leaves = [];
 		let currentStroke = Colour.definedColours[strokeColourKey];
 		let currentFill = Colour.definedColours[fillColourKey];
-		let scalePolicy = new ScalePolicy()[scalePolicyKey]();
-		if (scalePolicy.toString() !== new ScalePolicy().noScale().toString()) {
-			scaleY /= 10;
-			scaleX /= 10;
+		let scalePolicy = new ScalePolicy(1)[scalePolicyKey]();
+		if (scalePolicyKey === 'constant') {
+			scaleY *= 5;
+			scaleX *= 5;
 		}
 
 		for (let i = 0; i < leafCount; i++) {
@@ -164,8 +178,10 @@ export default class PlantFactory {
 				z
 			});
 
-			scaleX += scalePolicy(i) * leafWidth;
-			scaleY += scalePolicy(i) * leafLength;
+			scaleX += scalePolicy(i, true) * leafWidth;
+			if (curlInnerLeaves) scaleX -= 1 / (i + 1);
+
+			scaleY += scalePolicy(i, false) * leafLength;
 
 			currentStroke = ColourPolicy[strokeColourPolicyKey](
 				currentStroke,

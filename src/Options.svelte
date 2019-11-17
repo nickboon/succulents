@@ -1,65 +1,69 @@
 <script>
+	import preset from './preset';
 	import PlantFactory from './plantFactory';
 	import Colour from './colour';
 	import ColourPolicy from './colourPolicy';
 	import ScalePolicy from './scalePolicy.js';
-	import defaults from './defaults.js';
 
 	export let paths;
 	export let svgWidth;
 	export let svgHeight;
 
-	function reset() {
-		x = defaults.x;
-		y = defaults.y;
-		leafCount = defaults.leafCount;
-		leafWidth = defaults.leafWidth;
-		leafLength = defaults.leafLength;
-		angleOffset = defaults.angleOffset;
-		stemRadius = defaults.stemRadius;
-		leafTiltFullRange = defaults.leafTiltFullRange;
-		leafTiltMax = defaults.leafTiltMax;
-		leafTiltMin = defaults.leafTiltMin;
-		scalePolicyKey = defaults.scalePolicyKey;
-		strokeColourKey = defaults.strokeColourKey;
-		fillColourKey = defaults.fillColourKey;
-		strokeColourPolicyKey = defaults.strokeColourPolicyKey;
-		fillColourPolicyKey = defaults.fillColourPolicyKey;
-		colourChangeRate = defaults.colourChangeRate;
-		opacity = defaults.opacity;
-		addLabel = defaults.addLabel;
+	function getCurrentPreset() {
+		return preset.load(presetKey, svgWidth / 2, svgHeight / 2);
 	}
+	function reload() {
+		const currentPreset = getCurrentPreset();
+		x = currentPreset.x;
+		y = currentPreset.y;
+		leafCount = currentPreset.leafCount;
+		leafWidth = currentPreset.leafWidth;
+		leafLength = currentPreset.leafLength;
+		scalePolicyKey = currentPreset.scalePolicyKey;
+		curlInnerLeaves = currentPreset.curlInnerLeaves;
+		angleOffset = currentPreset.angleOffset;
+		stemRadius = currentPreset.stemRadius;
+		leafTiltFullRange = currentPreset.leafTiltFullRange;
+		leafTiltMax = currentPreset.leafTiltMax;
+		leafTiltMin = currentPreset.leafTiltMin;
+		strokeColourKey = currentPreset.strokeColourKey;
+		fillColourKey = currentPreset.fillColourKey;
+		strokeColourPolicyKey = currentPreset.strokeColourPolicyKey;
+		fillColourPolicyKey = currentPreset.fillColourPolicyKey;
+		colourChangeRate = currentPreset.colourChangeRate;
+		opacity = currentPreset.opacity;
+		addLabel = currentPreset.addLabel;
+	}
+
+	const presetKeys = Object.keys(preset.keys);
 	const definedColourKeys = Object.keys(Colour.definedColours);
 	const colourPolicyKeys = Object.keys(ColourPolicy);
 	const scalePolicyKeys = Object.getOwnPropertyNames(
 		Object.getPrototypeOf(new ScalePolicy())
 	).filter(name => name !== 'constructor');
 
-	defaults.leafTiltMax = PlantFactory.calculateLeafTiltLimit(
-		defaults.leafTiltFullRange
-	);
-	defaults.x = svgWidth / 2;
-	defaults.y = svgHeight / 2;
+	let presetKey = presetKeys[0];
 	let {
 		x,
 		y,
 		leafCount,
 		leafWidth,
 		leafLength,
+		scalePolicyKey,
+		curlInnerLeaves,
 		angleOffset,
 		stemRadius,
 		leafTiltFullRange,
 		leafTiltMax,
 		leafTiltMin,
-		scalePolicyKey,
+		strokeColourPolicyKey,
 		strokeColourKey,
 		fillColourKey,
-		strokeColourPolicyKey,
 		fillColourPolicyKey,
 		colourChangeRate,
 		opacity,
 		addLabel
-	} = defaults;
+	} = getCurrentPreset();
 
 	$: leafTiltLimit = PlantFactory.calculateLeafTiltLimit(leafTiltFullRange);
 	$: leafTiltMax = leafTiltMax > leafTiltLimit ? leafTiltLimit : leafTiltMax;
@@ -69,12 +73,13 @@
 		leafCount,
 		leafWidth,
 		leafLength,
+		scalePolicyKey,
+		curlInnerLeaves,
 		angleOffset,
 		stemRadius,
 		leafTiltMin,
 		leafTiltMax,
 		leafTiltFullRange,
-		scalePolicyKey,
 		strokeColourKey,
 		fillColourKey,
 		strokeColourPolicyKey,
@@ -88,9 +93,8 @@
 </script>
 
 <style>
-	h2 button {
+	button.reloadButton {
 		font-size: inherit;
-		font-weight: inherit;
 		border: none;
 	}
 	label {
@@ -107,10 +111,16 @@
 	}
 </style>
 
-<h2>
-	Options
-	<button on:click={reset}>&circlearrowright;</button>
-</h2>
+<h2>Options</h2>
+<div>
+	<label for="preset">Preset</label>
+	<select id="preset" bind:value={presetKey} on:click={reload}>
+		{#each presetKeys as key}
+			<option value={key}>{key}</option>
+		{/each}
+	</select>
+	<button class="reloadButton" on:click={reload}>&circlearrowright;</button>
+</div>
 <div>
 	<h3>Leaf</h3>
 	<div>
@@ -118,14 +128,14 @@
 		<input
 			id="leafWidth"
 			type="number"
-			step="0.1"
+			step="0.05"
 			bind:value={leafWidth}
 			min="0" />
 		<label for="leafLength">Length</label>
 		<input
 			id="leafLength"
 			type="number"
-			step="0.1"
+			step="0.05"
 			min="0"
 			bind:value={leafLength} />
 	</div>
@@ -144,6 +154,11 @@
 				<option value={policyKey}>{policyKey}</option>
 			{/each}
 		</select>
+		<label for="curlInnerLeaves">Adjust Inner</label>
+		<input
+			type="checkbox"
+			id="curlInnerLeaves"
+			bind:checked={curlInnerLeaves} />
 	</div>
 	<h4>Tilt</h4>
 	<div>

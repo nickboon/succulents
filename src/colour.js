@@ -19,6 +19,7 @@ export default class Colour {
 
 	static get definedColours() {
 		return {
+			darkGreen: new Colour(0, 100, 0),
 			green: new Colour(0, 128, 0),
 			limeGreen: new Colour(50, 205, 50),
 			greenYellow: new Colour(173, 255, 47),
@@ -30,6 +31,8 @@ export default class Colour {
 			darkOliveGreen: new Colour(85, 107, 47),
 			oliveDrab: new Colour(107, 142, 35),
 			darkKhaki: new Colour(189, 183, 107),
+			paleTurquoise: new Colour(175, 238, 238),
+			darkCyan: new Colour(0, 139, 139),
 			crimson: new Colour(220, 20, 60),
 			darkRed: new Colour(139, 0, 0),
 			white: new Colour(255, 255, 255),
