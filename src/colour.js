@@ -2,8 +2,8 @@ const _red = new WeakMap();
 const _green = new WeakMap();
 const _blue = new WeakMap();
 
-const max = 256;
-const toRange = colour => (colour < 0 ? 0 : colour % max);
+const max = 255;
+const toRange = colour => (colour < 0 ? 0 : colour > max ? max : colour);
 
 const toHexColourString = decimal => {
 	const hex = decimal.toString(16);
@@ -49,9 +49,9 @@ export default class Colour {
 
 	add(red, green = 0, blue = 0) {
 		return new Colour(
-			_red.get(this) + red,
-			_green.get(this) + green,
-			_blue.get(this) + blue
+			_red.get(this) + Math.floor(red),
+			_green.get(this) + Math.floor(green),
+			_blue.get(this) + Math.floor(blue)
 		);
 	}
 }

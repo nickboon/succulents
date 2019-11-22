@@ -7,6 +7,7 @@ const shared = {
 
 const keys = {
 	typeA: {
+		leafType: 'typeA',
 		leafCount: 39,
 		stemRadius: 12, //- 17,
 		angleOffset: -1,
@@ -25,6 +26,7 @@ const keys = {
 		opacity: 1
 	},
 	typeB: {
+		leafType: 'typeB',
 		leafCount: 85,
 		stemRadius: 7,
 		angleOffset: 1,
@@ -43,6 +45,7 @@ const keys = {
 		opacity: 1
 	},
 	typeC: {
+		leafType: 'typeC',
 		leafCount: 50,
 		stemRadius: 9,
 		angleOffset: 1.5,
@@ -61,28 +64,30 @@ const keys = {
 		opacity: 1
 	},
 	typeD: {
+		leafType: 'typeD',
 		leafCount: 19,
 		stemRadius: 0,
-		angleOffset: 7.1,
+		angleOffset: 7.3,
 		scalePolicyKey: 'inverseIndex',
-		leafLength: 0.5,
-		leafWidth: 1.2,
+		leafLength: 0.7,
+		leafWidth: 0.4,
 		leafTiltMin: 49,
-		leafTiltMax: 90,
+		leafTiltMax: 64,
 		leafTiltFullRange: 164,
 		strokeColourPolicyKey: 'greenToRed',
-		curlInnerLeaves: true,
+		curlInnerLeaves: false,
 		strokeColourKey: 'darkGreen',
 		fillColourKey: 'white',
 		fillColourPolicyKey: 'constant',
 		colourChangeRate: 1
 	},
 	typeE: {
+		leafType: 'typeE',
 		leafCount: 25,
 		stemRadius: 0,
 		angleOffset: 0,
 		scalePolicyKey: 'inverseIndex',
-		leafLength: 0.5,
+		leafLength: 0.45,
 		leafWidth: 0.2,
 		leafTiltMin: 16,
 		leafTiltMax: 47,
@@ -92,58 +97,62 @@ const keys = {
 		strokeColourKey: 'yellowGreen',
 		fillColourKey: 'white',
 		fillColourPolicyKey: 'constant',
-		colourChangeRate: 1
+		colourChangeRate: 2
 	},
 	typeF: {
+		leafType: 'typeF',
 		leafCount: 19,
-		stemRadius: 1,
-		angleOffset: -3.9,
+		stemRadius: 3,
+		angleOffset: -4.8,
 		scalePolicyKey: 'inverseIndex',
 		leafLength: 0.7,
-		leafWidth: 0.4,
-		leafTiltMin: 16,
+		leafWidth: 0.1,
+		leafTiltMin: 13,
 		leafTiltMax: 47,
 		leafTiltFullRange: 63,
 		strokeColourPolicyKey: 'blueToGreen',
-		curlInnerLeaves: false,
+		curlInnerLeaves: true,
 		strokeColourKey: 'darkCyan',
 		fillColourKey: 'white',
 		fillColourPolicyKey: 'constant',
 		colourChangeRate: 4
 	},
 	typeG: {
-		leafCount: 68,
-		stemRadius: 10,
+		leafType: 'typeG',
+		leafCount: 106,
+		stemRadius: 22,
 		angleOffset: 0,
-		scalePolicyKey: 'constant',
-		leafLength: 0.35,
-		leafWidth: 0,
-		leafTiltMin: 30,
-		leafTiltMax: 86,
-		leafTiltFullRange: 149,
-		strokeColourPolicyKey: 'greenToRed',
-		curlInnerLeaves: true,
+		scalePolicyKey: 'inverseIndex',
+		leafLength: 0.45,
+		leafWidth: 0.15,
+		leafTiltMin: 19,
+		leafTiltMax: 109,
+		leafTiltFullRange: 259,
+		strokeColourPolicyKey: 'blueToRed',
+		curlInnerLeaves: false,
 		strokeColourKey: 'paleTurquoise',
 		fillColourKey: 'white',
 		fillColourPolicyKey: 'constant',
-		colourChangeRate: 1
+		colourChangeRate: 0.5,
+		opacity: 1
 	},
 	TypeH: {
-		leafCount: 68,
-		stemRadius: 6,
-		angleOffset: 3.1,
+		leafType: 'typeH',
+		leafCount: 128,
+		stemRadius: 24,
+		angleOffset: 3.7,
 		scalePolicyKey: 'inverseIndex',
 		leafLength: 1.1,
 		leafWidth: 0,
-		leafTiltMin: 58,
+		leafTiltMin: 46,
 		leafTiltMax: 140,
-		leafTiltFullRange: 254,
+		leafTiltFullRange: 295,
 		strokeColourPolicyKey: 'greenToRed',
 		curlInnerLeaves: true,
 		strokeColourKey: 'limeGreen',
 		fillColourKey: 'white',
 		fillColourPolicyKey: 'constant',
-		colourChangeRate: 2
+		colourChangeRate: 2.1
 	}
 };
 

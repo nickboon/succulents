@@ -1,5 +1,7 @@
 <script>
 	import preset from './preset';
+	import LeafSvg from './leaf.js';
+	import SvgFactory from './svg';
 	import PlantFactory from './plantFactory';
 	import Colour from './colour';
 	import ColourPolicy from './colourPolicy';
@@ -16,6 +18,7 @@
 		const currentPreset = getCurrentPreset();
 		x = currentPreset.x;
 		y = currentPreset.y;
+		leafType = currentPreset.leafType;
 		leafCount = currentPreset.leafCount;
 		leafWidth = currentPreset.leafWidth;
 		leafLength = currentPreset.leafLength;
@@ -35,17 +38,36 @@
 		addLabel = currentPreset.addLabel;
 	}
 
+	const svgFactory = new SvgFactory();
+	function getSvgDataUrl(type) {
+		const paths = LeafSvg[type].build('black', 'white', 1, 'scale(0.4)');
+		const svg = '<svg>' + paths + svgFactory.closeSvg();
+		return `data:image/svg+xml;charset=UTF-8,${svg}`;
+	}
+
 	const presetKeys = Object.keys(preset.keys);
 	const definedColourKeys = Object.keys(Colour.definedColours);
 	const colourPolicyKeys = Object.keys(ColourPolicy);
 	const scalePolicyKeys = Object.getOwnPropertyNames(
 		Object.getPrototypeOf(new ScalePolicy())
 	).filter(name => name !== 'constructor');
+	const leafTypes = Object.getOwnPropertyNames(LeafSvg).filter(
+		name => name !== 'name' && name !== 'length' && name !== 'prototype'
+	);
+	const thumbnailScale = 0.4;
+	const thumbnailWidth =
+		Math.max(...leafTypes.map(type => LeafSvg[type].w)) * thumbnailScale;
+	const thumbnailHeight =
+		Math.max(...leafTypes.map(type => LeafSvg[type].h)) * thumbnailScale;
+	const thumbnailStroke = '#555';
+	const thumbnailFill = '#fff';
+	const thumbnailOpacity = 1;
 
 	let presetKey = presetKeys[0];
 	let {
 		x,
 		y,
+		leafType,
 		leafCount,
 		leafWidth,
 		leafLength,
@@ -70,6 +92,7 @@
 	$: plantFactory = new PlantFactory({
 		x,
 		y,
+		leafType,
 		leafCount,
 		leafWidth,
 		leafLength,
@@ -105,9 +128,27 @@
 		width: 4em;
 		margin-right: 1em;
 	}
+	input[type='checkbox'] {
+		width: auto;
+	}
 	select#strokeColourPolicy,
 	select#fillColourPolicy {
 		width: 7em;
+	}
+
+	input.hidden {
+		position: absolute;
+		opacity: 0;
+		width: 0;
+		height: 0;
+	}
+	label.leaf-option {
+		display: inline;
+		cursor: pointer;
+	}
+	label.leaf-option svg,
+	label.leaf-option input {
+		cursor: pointer;
 	}
 </style>
 
@@ -123,6 +164,25 @@
 </div>
 <div>
 	<h3>Leaf</h3>
+	{#each leafTypes as type}
+		<label for={type} class="leaf-option">
+			<input
+				id={type}
+				type="radio"
+				class="hidden"
+				name="leafTypes"
+				bind:group={leafType}
+				value={type} />
+			<svg
+				version="1.1"
+				xmlns="http://www.w3.org/2000/svg"
+				xmlns:xlink="http://www.w3.org/1999/xlink"
+				width={thumbnailWidth}
+				height={thumbnailHeight}>
+				{@html LeafSvg[type].build(thumbnailStroke, type === leafType ? thumbnailStroke : thumbnailFill, thumbnailOpacity, `scale(${thumbnailScale})`)}
+			</svg>
+		</label>
+	{/each}
 	<div>
 		<label for="leafWidth">Width</label>
 		<input
@@ -148,17 +208,19 @@
 	<div>
 		<label for="stemRadius">Stem Radius</label>
 		<input id="stemRadius" type="number" min="0" bind:value={stemRadius} />
+		<label for="curlInnerLeaves">Adjust Inner</label>
+		<input
+			type="checkbox"
+			id="curlInnerLeaves"
+			bind:checked={curlInnerLeaves} />
+	</div>
+	<div>
 		<label for="scalePolicy">Scale Policy</label>
 		<select id="scalePolicy" bind:value={scalePolicyKey}>
 			{#each scalePolicyKeys as policyKey}
 				<option value={policyKey}>{policyKey}</option>
 			{/each}
 		</select>
-		<label for="curlInnerLeaves">Adjust Inner</label>
-		<input
-			type="checkbox"
-			id="curlInnerLeaves"
-			bind:checked={curlInnerLeaves} />
 	</div>
 	<h4>Tilt</h4>
 	<div>
@@ -228,6 +290,7 @@
 		id="colourChangeRate"
 		type="number"
 		min="0"
+		step="0.1"
 		bind:value={colourChangeRate} />
 	<label for="opacity">Opacity</label>
 	<input

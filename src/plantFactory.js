@@ -50,6 +50,7 @@ export default class PlantFactory {
 		addLabel = true,
 		x = 0,
 		y = 0,
+		leafType = 'typeA',
 		leafCount = 50,
 		stemRadius = 10,
 		angleOffset = 0,
@@ -72,6 +73,7 @@ export default class PlantFactory {
 			addLabel,
 			x,
 			y,
+			leafType,
 			leafCount,
 			stemRadius,
 			angleOffset,
@@ -121,6 +123,7 @@ export default class PlantFactory {
 			addLabel,
 			x,
 			y,
+			leafType,
 			leafCount,
 			leafLength,
 			leafWidth,
@@ -157,6 +160,7 @@ export default class PlantFactory {
 			const tiltScale = -angle.cos;
 			const z = angle.sin;
 			const svg = leafFactory.buildLeaf({
+				type: leafType,
 				translation: {
 					x,
 					y: y - stemRadius
