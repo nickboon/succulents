@@ -5,7 +5,7 @@ export default class Elements {
 		opacity = 1,
 		stroke = '#000',
 		fontSize = 10,
-		textAnchor = 'left',
+		textAnchor = 'start',
 		fill = '#fff'
 	} = {}) {
 		defaults.set(this, {

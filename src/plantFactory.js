@@ -12,7 +12,7 @@ Continued fraction 		First three rationals 	Asymptotic 	divergence angle (°) 	S
 */
 import LeafFactory from './leafFactory';
 import Trigonometry from './trigonometry';
-import svgFactory from './svg';
+import SvgFactory from './svg';
 import ScalePolicy from './scalePolicy';
 import ColourPolicy from './colourPolicy';
 import Colour from './colour';
@@ -105,15 +105,15 @@ export default class PlantFactory {
 
 	label() {
 		const options = _options.get(this);
-		return new svgFactory().text(
-			Object.keys(options)
-				.map(key => `${key}: ${options[key]}`)
-				.join(', ') + '.',
-			{
-				x: 0,
-				y: 12
-			}
-		);
+		const svgFactory = new SvgFactory();
+		const x = 12;
+		let y = 12;
+
+		return Object.keys(options)
+			.map(key =>
+				svgFactory.text(`${key}: ${options[key]}`, { x, y: (y += 12) })
+			)
+			.join('');
 	}
 
 	build() {
