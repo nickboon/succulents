@@ -27,8 +27,8 @@
 		angleOffset = currentPreset.angleOffset;
 		stemRadius = currentPreset.stemRadius;
 		leafTiltFullRange = currentPreset.leafTiltFullRange;
-		leafTiltMax = currentPreset.leafTiltMax;
-		leafTiltMin = currentPreset.leafTiltMin;
+		leafTiltMaxDegrees = currentPreset.leafTiltMaxDegrees;
+		leafTiltMinDegrees = currentPreset.leafTiltMinDegrees;
 		strokeColourKey = currentPreset.strokeColourKey;
 		fillColourKey = currentPreset.fillColourKey;
 		strokeColourPolicyKey = currentPreset.strokeColourPolicyKey;
@@ -76,8 +76,8 @@
 		angleOffset,
 		stemRadius,
 		leafTiltFullRange,
-		leafTiltMax,
-		leafTiltMin,
+		leafTiltMaxDegrees,
+		leafTiltMinDegrees,
 		strokeColourPolicyKey,
 		strokeColourKey,
 		fillColourKey,
@@ -87,8 +87,6 @@
 		addLabel
 	} = getCurrentPreset();
 
-	$: leafTiltLimit = PlantFactory.calculateLeafTiltLimit(leafTiltFullRange);
-	$: leafTiltMax = leafTiltMax > leafTiltLimit ? leafTiltLimit : leafTiltMax;
 	$: plantFactory = new PlantFactory({
 		x,
 		y,
@@ -100,19 +98,19 @@
 		curlInnerLeaves,
 		angleOffset,
 		stemRadius,
-		leafTiltMin,
-		leafTiltMax,
+		leafTiltMinDegrees,
+		leafTiltMaxDegrees,
 		leafTiltFullRange,
 		strokeColourKey,
 		fillColourKey,
 		strokeColourPolicyKey,
 		fillColourPolicyKey,
 		colourChangeRate,
-		opacity,
-		addLabel
+		opacity
 	});
 
-	$: paths = plantFactory.build();
+	$: leafTiltIncrementInDegrees = Math.floor(360 / leafTiltFullRange);
+	$: paths = plantFactory.buildSvg(addLabel);
 </script>
 
 <style>
@@ -165,9 +163,8 @@
 <div>
 	<h3>Leaf</h3>
 	{#each leafTypes as type}
-		<label for={type} class="leaf-option">
+		<label class="leaf-option">
 			<input
-				id={type}
 				type="radio"
 				class="hidden"
 				name="leafTypes"
@@ -202,19 +199,6 @@
 	<div>
 		<label for="leafCount">Count</label>
 		<input id="leafCount" type="number" min="0" bind:value={leafCount} />
-		<label for="angleOffset">Rotation</label>
-		<input id="angleOffset" type="number" step="0.1" bind:value={angleOffset} />
-	</div>
-	<div>
-		<label for="stemRadius">Stem Radius</label>
-		<input id="stemRadius" type="number" min="0" bind:value={stemRadius} />
-		<label for="curlInnerLeaves">Adjust Inner</label>
-		<input
-			type="checkbox"
-			id="curlInnerLeaves"
-			bind:checked={curlInnerLeaves} />
-	</div>
-	<div>
 		<label for="scalePolicy">Scale Policy</label>
 		<select id="scalePolicy" bind:value={scalePolicyKey}>
 			{#each scalePolicyKeys as policyKey}
@@ -222,23 +206,14 @@
 			{/each}
 		</select>
 	</div>
-	<h4>Tilt</h4>
+	<h3>Phyllotaxis</h3>
 	<div>
-		<label for="leafTiltMin">Min</label>
-		<input
-			id="leafTiltMin"
-			type="number"
-			min="0"
-			max={leafTiltLimit}
-			bind:value={leafTiltMin} />
-		<label for="leafTiltMax">Max</label>
-		<input
-			id="leafTiltMax"
-			type="number"
-			min="0"
-			max={leafTiltLimit}
-			bind:value={leafTiltMax} />
+		<label for="angleOffset">Rotation</label>
+		<input id="angleOffset" type="number" step="0.1" bind:value={angleOffset} />
+		<label for="stemRadius">Stem Radius</label>
+		<input id="stemRadius" type="number" min="0" bind:value={stemRadius} />
 	</div>
+	<h4>Tilt</h4>
 	<div>
 		<label for="leafTiltFullRange">Steps</label>
 		<input
@@ -246,6 +221,29 @@
 			type="number"
 			min="1"
 			bind:value={leafTiltFullRange} />
+		<label for="curlInnerLeaves">Curl Inner</label>
+		<input
+			type="checkbox"
+			id="curlInnerLeaves"
+			bind:checked={curlInnerLeaves} />
+	</div>
+	<div>
+		<label for="leafTiltMinDegrees">Start &deg;</label>
+		<input
+			id="leafTiltMinDegrees"
+			type="number"
+			min="0"
+			max="270"
+			step={leafTiltIncrementInDegrees}
+			bind:value={leafTiltMinDegrees} />
+		<label for="leafTiltMaxDegrees">End &deg;</label>
+		<input
+			id="leafTiltMaxDegrees"
+			type="number"
+			min="0"
+			max="270"
+			step={leafTiltIncrementInDegrees}
+			bind:value={leafTiltMaxDegrees} />
 	</div>
 </div>
 <div>
