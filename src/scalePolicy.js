@@ -1,4 +1,4 @@
-import FibonacciSeries from './fibonacciSeries';
+import FibonacciSeries from './fibonacciSeries.js';
 
 const _fibonacciSeries = new WeakMap();
 const _defaults = new WeakMap();
