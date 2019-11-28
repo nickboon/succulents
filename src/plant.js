@@ -142,16 +142,12 @@ export default class PlantFactory {
 			.join('');
 	}
 
-	buildSvg(addLabel = true, addCentreMarker = false) {
-		return (
-			_leaves
-				.get(this)
-				.reverse()
-				.sort((a, b) => (a.z > b.z ? 1 : b.z > a.z ? -1 : 0))
-				.map(leaf => leaf.svg)
-				.join('') +
-			(addLabel ? this.label : '') +
-			(addCentreMarker ? this.centremarker : '')
-		);
+	buildSvg() {
+		return _leaves
+			.get(this)
+			.reverse()
+			.sort((a, b) => (a.z > b.z ? 1 : b.z > a.z ? -1 : 0))
+			.map(leaf => leaf.svg)
+			.join('');
 	}
 }

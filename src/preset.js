@@ -1,8 +1,7 @@
 const shared = {
 	x: 0,
 	y: 0,
-	opacity: 1,
-	addLabel: true
+	opacity: 1
 };
 
 const keys = {
@@ -22,8 +21,7 @@ const keys = {
 		fillColourKey: 'white',
 		strokeColourPolicyKey: 'greenToRed',
 		fillColourPolicyKey: 'constant',
-		colourChangeRate: 1,
-		opacity: 1
+		colourChangeRate: 1
 	},
 	typeB: {
 		leafType: 'typeB',
@@ -41,8 +39,7 @@ const keys = {
 		fillColourKey: 'white',
 		strokeColourPolicyKey: 'blueToGreen',
 		fillColourPolicyKey: 'constant',
-		colourChangeRate: 1,
-		opacity: 1
+		colourChangeRate: 1
 	},
 	typeC: {
 		leafType: 'typeC',
@@ -60,8 +57,7 @@ const keys = {
 		fillColourKey: 'white',
 		strokeColourPolicyKey: 'blueToGreen',
 		fillColourPolicyKey: 'constant',
-		colourChangeRate: 1,
-		opacity: 1
+		colourChangeRate: 1
 	},
 	typeD: {
 		leafType: 'typeD',
@@ -133,8 +129,7 @@ const keys = {
 		strokeColourKey: 'paleTurquoise',
 		fillColourKey: 'white',
 		fillColourPolicyKey: 'constant',
-		colourChangeRate: 0.5,
-		opacity: 1
+		colourChangeRate: 0.5
 	},
 	TypeH: {
 		leafType: 'typeH',

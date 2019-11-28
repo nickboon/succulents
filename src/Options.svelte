@@ -2,7 +2,7 @@
 	import preset from './preset';
 	import LeafSvg from './leaf.js';
 	import SvgFactory from './svg';
-	import PlantFactory from './plantFactory';
+	import Plant from './plant';
 	import Colour from './colour';
 	import ColourPolicy from './colourPolicy';
 	import ScalePolicy from './scalePolicy.js';
@@ -35,13 +35,12 @@
 		fillColourPolicyKey = currentPreset.fillColourPolicyKey;
 		colourChangeRate = currentPreset.colourChangeRate;
 		opacity = currentPreset.opacity;
-		addLabel = currentPreset.addLabel;
 	}
 
 	const svgFactory = new SvgFactory();
 	function getSvgDataUrl(type) {
-		const paths = LeafSvg[type].build('black', 'white', 1, 'scale(0.4)');
-		const svg = '<svg>' + paths + svgFactory.closeSvg();
+		const leaf = LeafSvg[type].build('black', 'white', 1, 'scale(0.4)');
+		const svg = '<svg>' + leaf + svgFactory.closeSvg();
 		return `data:image/svg+xml;charset=UTF-8,${svg}`;
 	}
 
@@ -83,11 +82,11 @@
 		fillColourKey,
 		fillColourPolicyKey,
 		colourChangeRate,
-		opacity,
-		addLabel
+		opacity
 	} = getCurrentPreset();
+	let addLabel = true;
 
-	$: plantFactory = new PlantFactory({
+	$: plant = new Plant({
 		x,
 		y,
 		leafType,
@@ -110,7 +109,8 @@
 	});
 
 	$: leafTiltIncrementInDegrees = Math.floor(360 / leafTiltFullRange);
-	$: paths = plantFactory.buildSvg(addLabel);
+	$: plantPaths = plant.buildSvg();
+	$: paths = plantPaths + (addLabel ? plant.label : '');
 </script>
 
 <style>
