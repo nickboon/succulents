@@ -10,6 +10,7 @@ Continued fraction 		First three rationals 	Asymptotic 	divergence angle (°) 	S
 [0,4,1,1,1, ...] 		1/4, 1/5, 2/9, ... 		77.955... 							normal
 [0,2,1,2,1,1, ...] 		3/8, 4/11, 7/19, ... 	132.178... 							not classified
 */
+import preset from './preset';
 import LeafFactory from './leafFactory.js';
 import Trigonometry from './trigonometry.js';
 import SvgFactory from './svg.js';
@@ -21,6 +22,8 @@ const goldenAngleDegrees = 137.5077640500378546463487;
 const maxDegrees = 360;
 const _options = new WeakMap();
 const _leaves = new WeakMap();
+const defaultPreset = preset.keys[0];
+const defaultParameters = preset.load(defaultPreset);
 /*
     leaf tilt
     ===========
@@ -33,25 +36,25 @@ const _leaves = new WeakMap();
 */
 export default class PlantFactory {
 	constructor({
-		x = 0,
-		y = 0,
-		leafType = 'typeA',
-		leafCount = 50,
-		stemRadius = 10,
-		angleOffset = 0,
-		leafLength = 0.5,
-		leafWidth = 0.5,
-		leafTiltFullRange = 100,
-		leafTiltMinDegrees = 0,
-		leafTiltMaxDegrees = 270,
-		scalePolicyKey = 'inverseFibonacci',
-		curlInnerLeaves = false,
-		strokeColourKey = 'green',
-		fillColourKey = 'white',
-		strokeColourPolicyKey = 'constant',
-		fillColourPolicyKey = 'constant',
-		colourChangeRate = 2,
-		opacity = 1
+		x = defaultParameters.x,
+		y = defaultParameters.y,
+		leafKey = defaultParameters.leafKey,
+		leafCount = defaultParameters.leafCount,
+		stemRadius = defaultParameters.stemRadius,
+		angleOffset = defaultParameters.angleOffset,
+		leafLength = defaultParameters.leafLength,
+		leafWidth = defaultParameters.leafWidth,
+		leafTiltFullRange = defaultParameters.leafTiltFullRange,
+		leafTiltMinDegrees = defaultParameters.leafTiltMinDegrees,
+		leafTiltMaxDegrees = defaultParameters.leafTiltMaxDegrees,
+		scalePolicyKey = defaultParameters.scalePolicyKey,
+		curlInnerLeaves = defaultParameters.curlInnerLeaves,
+		strokeColourKey = defaultParameters.strokeColourKey,
+		fillColourKey = defaultParameters.fillColourKey,
+		strokeColourPolicyKey = defaultParameters.strokeColourPolicyKey,
+		fillColourPolicyKey = defaultParameters.fillColourPolicyKey,
+		colourChangeRate = defaultParameters.colourChangeRate,
+		opacity = defaultParameters.opacity
 	} = {}) {
 		_options.set(this, arguments[0]);
 
@@ -74,13 +77,14 @@ export default class PlantFactory {
 		let leafTilt = leafTiltMin;
 		let currentStroke = Colour.definedColours[strokeColourKey];
 		let currentFill = Colour.definedColours[fillColourKey];
-		let scalePolicy = new ScalePolicy()[scalePolicyKey]();
+		let scalePolicy = ScalePolicy[scalePolicyKey];
+
 		for (let i = 0; i < leafCount; i++) {
 			const angle = trigTable.getAngle(leafTilt);
 			const tiltScale = -angle.cos;
 			const z = angle.sin;
 			const svg = leafFactory.buildLeaf({
-				type: leafType,
+				type: leafKey,
 				translation: {
 					x,
 					y: y - stemRadius
@@ -101,11 +105,11 @@ export default class PlantFactory {
 				svg,
 				z
 			});
-			scaleX += scalePolicy(i, true) * leafWidth;
+
+			scaleX += scalePolicy(i) * leafWidth;
 			if (curlInnerLeaves) scaleX -= 1 / (i + 1);
 
-			scaleY += scalePolicy(i, false) * leafLength;
-
+			scaleY += scalePolicy(i) * leafLength;
 			currentStroke = ColourPolicy[strokeColourPolicyKey](
 				currentStroke,
 				colourChangeRate
@@ -123,9 +127,10 @@ export default class PlantFactory {
 
 	get centremarker() {
 		const { x, y, stemRadius } = _options.get(this);
+		const svgFactory = new SvgFactory();
 		return [
-			`<path d="M${x - stemRadius} ${y} L${x + stemRadius} ${y}" />`,
-			`<path d="M${x} ${y - stemRadius} L${x} ${y + stemRadius}" />`
+			svgFactory.line({ x: x - stemRadius, y }, { x: x + stemRadius, y }),
+			svgFactory.line({ x, y: y - stemRadius }, { x, y: y + stemRadius })
 		].join('');
 	}
 
@@ -142,7 +147,7 @@ export default class PlantFactory {
 			.join('');
 	}
 
-	buildSvg() {
+	buildPaths() {
 		return _leaves
 			.get(this)
 			.reverse()

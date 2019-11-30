@@ -40,6 +40,10 @@ export default class Colour {
 		};
 	}
 
+	static get keys() {
+		return Object.keys(Colour.definedColours);
+	}
+
 	get hexString() {
 		const redHex = toHexColourString(_red.get(this));
 		const greenHex = toHexColourString(_green.get(this));

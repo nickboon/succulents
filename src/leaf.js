@@ -70,4 +70,14 @@ export default class LeafSvg {
 			h: 29.259
 		};
 	}
+
+	static get keys() {
+		return Object.getOwnPropertyNames(LeafSvg).filter(
+			name =>
+				name !== 'name' &&
+				name !== 'length' &&
+				name !== 'prototype' &&
+				name !== 'keys'
+		);
+	}
 }

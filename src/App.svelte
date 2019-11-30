@@ -41,7 +41,7 @@
 
 <div id="app">
 	<header>
-		<h1>Succulent SVG Generator</h1>
+		<h1>Succulent Design SVG Generator</h1>
 	</header>
 	<div class="row">
 		<div id="optionsPanel">

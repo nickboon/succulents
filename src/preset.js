@@ -1,10 +1,4 @@
-const shared = {
-	x: 0,
-	y: 0,
-	opacity: 1
-};
-
-const keys = {
+const presets = {
 	typeA: {
 		leafType: 'typeA',
 		leafCount: 39,
@@ -151,15 +145,45 @@ const keys = {
 	}
 };
 
-function load(setId, x, y) {
+const keys = Object.keys(presets);
+
+const steps = {
+	leafDimensionStep: 0.05,
+	angleOffsetStep: 0.1,
+	colourChangeRateStep: 0.1
+};
+
+function load(key, x = 0, y = 0, opacity = 1) {
 	return {
-		...shared,
-		...keys[setId],
-		...{ x, y }
+		...presets[key],
+		x,
+		y,
+		opacity
 	};
+}
+
+function min(property, filter = () => true) {
+	return Math.min(
+		...keys
+			.map(key => presets[key])
+			.filter(filter)
+			.map(preset => preset[property])
+	);
+}
+
+function max(property, filter = () => true) {
+	return Math.max(
+		...keys
+			.map(key => presets[key])
+			.filter(filter)
+			.map(preset => preset[property])
+	);
 }
 
 export default {
 	load,
-	keys
+	keys,
+	steps,
+	min,
+	max
 };

@@ -1,3 +1,12 @@
+function roundToNearestStep(n, step) {
+	return step * Math.floor(n / step);
+}
+
+function getPrecision(value) {
+	if (Math.floor(value) === value || isNaN(value)) return 0;
+	return value.toString().split('.')[1].length || 0;
+}
+
 export default class Random {
 	int(max) {
 		return Math.floor(Math.random() * (max + 1));
@@ -9,6 +18,17 @@ export default class Random {
 		return Math.floor(Math.random() * (max - min + 1)) + min;
 	}
 
+	stepBetween(min, max, step) {
+		const precision = Math.pow(10, getPrecision(step));
+		min *= precision;
+		max *= precision;
+		step *= precision;
+		const randomInt = this.intBetween(min, max);
+		const roundedRandomInt = roundToNearestStep(randomInt, step);
+
+		return roundedRandomInt / precision;
+	}
+
 	bool() {
 		return this.int(1) === 0;
 	}
@@ -17,6 +37,7 @@ export default class Random {
 		if (array.length === 0) return -1;
 		return this.int(array.length - 1);
 	}
+
 	arrayElement(array) {
 		if (array.length === 0) return false;
 		return array[this.index(array)];

@@ -1,11 +1,12 @@
 <script>
 	import preset from './preset';
-	import LeafSvg from './leaf.js';
+	import LeafSvg from './leaf';
 	import SvgFactory from './svg';
 	import Plant from './plant';
 	import Colour from './colour';
 	import ColourPolicy from './colourPolicy';
-	import ScalePolicy from './scalePolicy.js';
+	import ScalePolicy from './scalePolicy';
+	import RandomPlant from './randomPlant';
 
 	export let paths;
 	export let svgWidth;
@@ -18,7 +19,7 @@
 		const currentPreset = getCurrentPreset();
 		x = currentPreset.x;
 		y = currentPreset.y;
-		leafType = currentPreset.leafType;
+		leafKey = currentPreset.leafKey;
 		leafCount = currentPreset.leafCount;
 		leafWidth = currentPreset.leafWidth;
 		leafLength = currentPreset.leafLength;
@@ -37,6 +38,40 @@
 		opacity = currentPreset.opacity;
 	}
 
+	function loadRandomLeaf() {
+		const randomLeaf = RandomPlant.leaf;
+		leafKey = randomLeaf.leafKey;
+		leafCount = randomLeaf.leafCount;
+		leafWidth = randomLeaf.leafWidth;
+		leafLength = randomLeaf.leafLength;
+		curlInnerLeaves = randomLeaf.curlInnerLeaves;
+		scalePolicyKey = randomLeaf.scalePolicyKey;
+	}
+
+	function loadRandomPhyllotaxis() {
+		const randomPhyllotaxis = RandomPlant.phyllotaxis;
+		angleOffset = randomPhyllotaxis.angleOffset;
+		stemRadius = randomPhyllotaxis.stemRadius;
+		leafTiltFullRange = randomPhyllotaxis.leafTiltFullRange;
+		leafTiltMaxDegrees = randomPhyllotaxis.leafTiltMaxDegrees;
+		leafTiltMinDegrees = randomPhyllotaxis.leafTiltMinDegrees;
+	}
+
+	function loadRandomColour() {
+		const randomColour = RandomPlant.colour;
+		strokeColourKey = randomColour.strokeColourKey;
+		fillColourKey = randomColour.fillColourKey;
+		strokeColourPolicyKey = randomColour.strokeColourPolicyKey;
+		fillColourPolicyKey = randomColour.fillColourPolicyKey;
+		colourChangeRate = randomColour.colourChangeRate;
+	}
+
+	function loadRandomPlant() {
+		loadRandomLeaf();
+		loadRandomPhyllotaxis();
+		loadRandomColour();
+	}
+
 	const svgFactory = new SvgFactory();
 	function getSvgDataUrl(type) {
 		const leaf = LeafSvg[type].build('black', 'white', 1, 'scale(0.4)');
@@ -44,20 +79,17 @@
 		return `data:image/svg+xml;charset=UTF-8,${svg}`;
 	}
 
-	const presetKeys = Object.keys(preset.keys);
-	const definedColourKeys = Object.keys(Colour.definedColours);
-	const colourPolicyKeys = Object.keys(ColourPolicy);
-	const scalePolicyKeys = Object.getOwnPropertyNames(
-		Object.getPrototypeOf(new ScalePolicy())
-	).filter(name => name !== 'constructor');
-	const leafTypes = Object.getOwnPropertyNames(LeafSvg).filter(
-		name => name !== 'name' && name !== 'length' && name !== 'prototype'
-	);
+	const presetKeys = preset.keys;
+	const definedColourKeys = Colour.keys;
+	const colourPolicyKeys = ColourPolicy.keys;
+	const scalePolicyKeys = ScalePolicy.keys;
+	const leafKeys = LeafSvg.keys;
+
 	const thumbnailScale = 0.4;
 	const thumbnailWidth =
-		Math.max(...leafTypes.map(type => LeafSvg[type].w)) * thumbnailScale;
+		Math.max(...leafKeys.map(key => LeafSvg[key].w)) * thumbnailScale;
 	const thumbnailHeight =
-		Math.max(...leafTypes.map(type => LeafSvg[type].h)) * thumbnailScale;
+		Math.max(...leafKeys.map(key => LeafSvg[key].h)) * thumbnailScale;
 	const thumbnailStroke = '#555';
 	const thumbnailFill = '#fff';
 	const thumbnailOpacity = 1;
@@ -66,7 +98,7 @@
 	let {
 		x,
 		y,
-		leafType,
+		leafKey,
 		leafCount,
 		leafWidth,
 		leafLength,
@@ -89,7 +121,7 @@
 	$: plant = new Plant({
 		x,
 		y,
-		leafType,
+		leafKey,
 		leafCount,
 		leafWidth,
 		leafLength,
@@ -109,12 +141,12 @@
 	});
 
 	$: leafTiltIncrementInDegrees = Math.floor(360 / leafTiltFullRange);
-	$: plantPaths = plant.buildSvg();
+	$: plantPaths = plant.buildPaths();
 	$: paths = plantPaths + (addLabel ? plant.label : '');
 </script>
 
 <style>
-	button.reloadButton {
+	button.icon-button {
 		font-size: inherit;
 		border: none;
 	}
@@ -148,9 +180,23 @@
 	label.leaf-option input {
 		cursor: pointer;
 	}
+	i {
+		font-style: normal;
+	}
+	i.shuffle:after {
+		content: '\1F500\FE0E';
+	}
+	i.reload:after {
+		content: '\21BB';
+	}
 </style>
 
-<h2>Options</h2>
+<h2>
+	Parameters
+	<button class="icon-button" on:click={loadRandomPlant}>
+		<i class="shuffle" />
+	</button>
+</h2>
 <div>
 	<label for="preset">Preset</label>
 	<select id="preset" bind:value={presetKey} on:click={reload}>
@@ -158,17 +204,24 @@
 			<option value={key}>{key}</option>
 		{/each}
 	</select>
-	<button class="reloadButton" on:click={reload}>&circlearrowright;</button>
+	<button class="icon-button" on:click={reload}>
+		<i class="reload" />
+	</button>
 </div>
 <div>
-	<h3>Leaf</h3>
-	{#each leafTypes as type}
+	<h3>
+		Leaf
+		<button class="icon-button" on:click={loadRandomLeaf}>
+			<i class="shuffle" />
+		</button>
+	</h3>
+	{#each leafKeys as type}
 		<label class="leaf-option">
 			<input
 				type="radio"
 				class="hidden"
-				name="leafTypes"
-				bind:group={leafType}
+				name="leafKeys "
+				bind:group={leafKey}
 				value={type} />
 			<svg
 				version="1.1"
@@ -176,7 +229,7 @@
 				xmlns:xlink="http://www.w3.org/1999/xlink"
 				width={thumbnailWidth}
 				height={thumbnailHeight}>
-				{@html LeafSvg[type].build(thumbnailStroke, type === leafType ? thumbnailStroke : thumbnailFill, thumbnailOpacity, `scale(${thumbnailScale})`)}
+				{@html LeafSvg[type].build(thumbnailStroke, type === leafKey ? thumbnailStroke : thumbnailFill, thumbnailOpacity, `scale(${thumbnailScale})`)}
 			</svg>
 		</label>
 	{/each}
@@ -185,20 +238,27 @@
 		<input
 			id="leafWidth"
 			type="number"
-			step="0.05"
-			bind:value={leafWidth}
-			min="0" />
+			min="0"
+			step={preset.steps.leafDimensionStep}
+			bind:value={leafWidth} />
 		<label for="leafLength">Length</label>
 		<input
 			id="leafLength"
 			type="number"
-			step="0.05"
 			min="0"
+			step={preset.steps.leafDimensionStep}
 			bind:value={leafLength} />
 	</div>
 	<div>
 		<label for="leafCount">Count</label>
 		<input id="leafCount" type="number" min="0" bind:value={leafCount} />
+		<label for="curlInnerLeaves">Curl Inner</label>
+		<input
+			type="checkbox"
+			id="curlInnerLeaves"
+			bind:checked={curlInnerLeaves} />
+	</div>
+	<div>
 		<label for="scalePolicy">Scale Policy</label>
 		<select id="scalePolicy" bind:value={scalePolicyKey}>
 			{#each scalePolicyKeys as policyKey}
@@ -206,27 +266,23 @@
 			{/each}
 		</select>
 	</div>
-	<h3>Phyllotaxis</h3>
+	<h3>
+		Phyllotaxis
+		<button class="icon-button" on:click={loadRandomPhyllotaxis}>
+			<i class="shuffle" />
+		</button>
+	</h3>
 	<div>
 		<label for="angleOffset">Rotation</label>
-		<input id="angleOffset" type="number" step="0.1" bind:value={angleOffset} />
+		<input
+			id="angleOffset"
+			type="number"
+			step={preset.steps.angleOffsetStep}
+			bind:value={angleOffset} />
 		<label for="stemRadius">Stem Radius</label>
 		<input id="stemRadius" type="number" min="0" bind:value={stemRadius} />
 	</div>
 	<h4>Tilt</h4>
-	<div>
-		<label for="leafTiltFullRange">Steps</label>
-		<input
-			id="leafTiltFullRange"
-			type="number"
-			min="1"
-			bind:value={leafTiltFullRange} />
-		<label for="curlInnerLeaves">Curl Inner</label>
-		<input
-			type="checkbox"
-			id="curlInnerLeaves"
-			bind:checked={curlInnerLeaves} />
-	</div>
 	<div>
 		<label for="leafTiltMinDegrees">Start &deg;</label>
 		<input
@@ -245,9 +301,22 @@
 			step={leafTiltIncrementInDegrees}
 			bind:value={leafTiltMaxDegrees} />
 	</div>
+	<div>
+		<label for="leafTiltFullRange">Steps</label>
+		<input
+			id="leafTiltFullRange"
+			type="number"
+			min="1"
+			bind:value={leafTiltFullRange} />
+	</div>
 </div>
 <div>
-	<h3>Colour</h3>
+	<h3>
+		Colour
+		<button class="icon-button" on:click={loadRandomColour}>
+			<i class="shuffle" />
+		</button>
+	</h3>
 	<div>
 		<label for="strokeColour">Stroke</label>
 		<select
@@ -288,7 +357,7 @@
 		id="colourChangeRate"
 		type="number"
 		min="0"
-		step="0.1"
+		step={preset.steps.colourChangeRateStep}
 		bind:value={colourChangeRate} />
 	<label for="opacity">Opacity</label>
 	<input
