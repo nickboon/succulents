@@ -1,6 +1,6 @@
 const presets = {
 	typeA: {
-		leafType: 'typeA',
+		leafKey: 'typeA',
 		leafCount: 39,
 		stemRadius: 12,
 		angleOffset: -1,
@@ -18,7 +18,7 @@ const presets = {
 		colourChangeRate: 1
 	},
 	typeB: {
-		leafType: 'typeB',
+		leafKey: 'typeB',
 		leafCount: 85,
 		stemRadius: 7,
 		angleOffset: 1,
@@ -36,7 +36,7 @@ const presets = {
 		colourChangeRate: 1
 	},
 	typeC: {
-		leafType: 'typeC',
+		leafKey: 'typeC',
 		leafCount: 50,
 		stemRadius: 9,
 		angleOffset: 1.5,
@@ -54,7 +54,7 @@ const presets = {
 		colourChangeRate: 1
 	},
 	typeD: {
-		leafType: 'typeD',
+		leafKey: 'typeD',
 		leafCount: 19,
 		stemRadius: 0,
 		angleOffset: 7.3,
@@ -72,7 +72,7 @@ const presets = {
 		colourChangeRate: 1
 	},
 	typeE: {
-		leafType: 'typeE',
+		leafKey: 'typeE',
 		leafCount: 25,
 		stemRadius: 0,
 		angleOffset: 0,
@@ -90,7 +90,7 @@ const presets = {
 		colourChangeRate: 2
 	},
 	typeF: {
-		leafType: 'typeF',
+		leafKey: 'typeF',
 		leafCount: 19,
 		stemRadius: 3,
 		angleOffset: -4.8,
@@ -108,7 +108,7 @@ const presets = {
 		colourChangeRate: 4
 	},
 	typeG: {
-		leafType: 'typeG',
+		leafKey: 'typeG',
 		leafCount: 106,
 		stemRadius: 22,
 		angleOffset: 0,
@@ -126,7 +126,7 @@ const presets = {
 		colourChangeRate: 0.5
 	},
 	TypeH: {
-		leafType: 'typeH',
+		leafKey: 'typeH',
 		leafCount: 128,
 		stemRadius: 24,
 		angleOffset: 3.7,
@@ -147,19 +147,16 @@ const presets = {
 
 const keys = Object.keys(presets);
 
+const defaultKey = keys[0];
+
 const steps = {
 	leafDimensionStep: 0.05,
 	angleOffsetStep: 0.1,
 	colourChangeRateStep: 0.1
 };
 
-function load(key, x = 0, y = 0, opacity = 1) {
-	return {
-		...presets[key],
-		x,
-		y,
-		opacity
-	};
+function load(key = keys[0]) {
+	return presets[key];
 }
 
 function min(property, filter = () => true) {
@@ -183,6 +180,7 @@ function max(property, filter = () => true) {
 export default {
 	load,
 	keys,
+	defaultKey,
 	steps,
 	min,
 	max

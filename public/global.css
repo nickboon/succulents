@@ -77,6 +77,17 @@ button:focus {
 	border-color: #666;
 }
 
+button.icon-button {
+	font-size: inherit;
+	border: none;
+}
+button.icon-button.shuffle:after {
+	content: '\1F500\FE0E';
+}
+button.icon-button.reload:after {
+	content: '\21BB';
+}
+
 /* The switch - the box around the slider */
 .switch {
 	position: relative;

@@ -48,7 +48,7 @@ export default class LeafSvg {
 		return {
 			build: (stroke, fill, opacity, transformation) =>
 				`<path vector-effect="non-scaling-stroke" d="M18.2,29.66a12.68,12.68,0,0,0,3.35-.43C30,24.62,35.17,15.49,35.17,15.49c4.08-6-11.59-10.67-11.59-10.67C20,3.31,17.79,1,18.2.5h-.05c.41.45-1.82,2.81-5.39,4.32,0,0-15.66,4.72-11.58,10.67,0,0,5.17,9.13,13.62,13.74a12.68,12.68,0,0,0,3.35.43" transform="${transformation}" fill="${fill}" stroke="${stroke}" opacity="${opacity}" />`,
-			w: 35.345,
+			w: 35.346,
 			h: 29.157
 		};
 	}
@@ -57,8 +57,8 @@ export default class LeafSvg {
 		return {
 			build: (stroke, fill, opacity, transformation) =>
 				`<path vector-effect="non-scaling-stroke" d="M16,26.57c3.71.57,5.07-1.41,7.22-3.71,6.64-7.86,8-15,8-15C33.65-.68,17,1.23,17,1.23A2.29,2.29,0,0,1,16,0h0a2.22,2.22,0,0,1-1,1.21S-1.74-.68.76,7.82c0,0,1.34,7.18,8,15,2.14,2.3,3.51,4.28,7.21,3.71Z" transform="${transformation}" fill="${fill}" stroke="${stroke}" opacity="${opacity}" />`,
-			w: 30.908,
-			h: 26.649
+			w: 30.957,
+			h: 26.669
 		};
 	}
 

@@ -1,5 +1,5 @@
 <script>
-	import Options from './Options.svelte';
+	import Parameters from './Parameters.svelte';
 	import SvgDownloadLink from './SvgDownloadLink.svelte';
 	import SvgFactory from './svg';
 
@@ -45,7 +45,7 @@
 	</header>
 	<div class="row">
 		<div id="optionsPanel">
-			<Options bind:paths {svgWidth} {svgHeight} />
+			<Parameters bind:paths {svgWidth} {svgHeight} />
 		</div>
 		<div id="svgPanel">
 			{@html svg}
