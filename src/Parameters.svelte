@@ -11,6 +11,7 @@
 	import SvgFactory from './svg';
 	import Plant from './plant';
 	import RandomPlant from './randomPlant';
+	import Random from './random.js';
 
 	export let paths;
 	export let svgWidth;
@@ -41,6 +42,22 @@
 		);
 	}
 
+	function loadMultipleRandom() {
+		const parametersList = [];
+		for (let index = multpleCount; index > 0; index--)
+			parametersList.push({
+				x: new Random().int(svgWidth),
+				y: new Random().int(svgHeight),
+				...RandomPlant.leaf,
+				...RandomPlant.phyllotaxis,
+				...RandomPlant.colour
+			});
+
+		paths = parametersList
+			.map(parameters => new Plant(parameters).buildPaths())
+			.join('');
+	}
+
 	let presetKey = preset.defaultKey;
 	let addLabel = true;
 
@@ -53,6 +70,8 @@
 	});
 	$: plantPaths = plant.buildPaths();
 	$: paths = plantPaths + (addLabel ? plant.label : '');
+
+	let multpleCount = 100;
 </script>
 
 <style>
@@ -70,7 +89,7 @@
 </style>
 
 <h2>
-	Parameters
+	Single
 	<button class="icon-button shuffle" on:click={loadRandom} />
 </h2>
 <div>
@@ -89,4 +108,12 @@
 	<h3>SVG</h3>
 	<label for="addLabel">Annotate</label>
 	<input id="addLabel" type="checkbox" bind:checked={addLabel} />
+</div>
+<h2>
+	Multiple
+	<button class="icon-button shuffle" on:click={loadMultipleRandom} />
+</h2>
+<div>
+	<label for="multpleCount">Count</label>
+	<input id="multpleCount" type="number" min="0" bind:value={multpleCount} />
 </div>
