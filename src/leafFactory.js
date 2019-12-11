@@ -1,7 +1,7 @@
 import LeafSvg from './leaf.js';
 
 export default class LeafFactory {
-	buildLeaf({
+	buildSvg({
 		type = 'typeA',
 		translation,
 		rotation,

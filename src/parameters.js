@@ -15,6 +15,7 @@ export const leafParameters = writable({
 export const phyllotaxisParameters = writable({
 	angleOffset: defaultPreset.angleOffset,
 	stemRadius: defaultPreset.stemRadius,
+	useAutoStemRadius: false,
 	leafTiltFullRange: defaultPreset.leafTiltFullRange,
 	leafTiltMaxDegrees: defaultPreset.leafTiltMaxDegrees,
 	leafTiltMinDegrees: defaultPreset.leafTiltMinDegrees

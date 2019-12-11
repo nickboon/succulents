@@ -11,6 +11,7 @@ Continued fraction 		First three rationals 	Asymptotic 	divergence angle (°) 	S
 [0,2,1,2,1,1, ...] 		3/8, 4/11, 7/19, ... 	132.178... 							not classified
 */
 import preset from './preset';
+import Leaf from './leaf.js';
 import LeafFactory from './leafFactory.js';
 import Trigonometry from './trigonometry.js';
 import SvgFactory from './svg.js';
@@ -22,6 +23,7 @@ const goldenAngleDegrees = 137.5077640500378546463487;
 const maxDegrees = 360;
 const _options = new WeakMap();
 const _leaves = new WeakMap();
+const _autoStemRadius = new WeakMap();
 const defaultPreset = preset.keys[0];
 const defaultParameters = preset.load(defaultPreset);
 /*
@@ -41,6 +43,7 @@ export default class PlantFactory {
 		leafKey = defaultParameters.leafKey,
 		leafCount = defaultParameters.leafCount,
 		stemRadius = defaultParameters.stemRadius,
+		useAutoStemRadius = false,
 		angleOffset = defaultParameters.angleOffset,
 		leafLength = defaultParameters.leafLength,
 		leafWidth = defaultParameters.leafWidth,
@@ -67,7 +70,6 @@ export default class PlantFactory {
 		);
 
 		const leaves = [];
-		const leafFactory = new LeafFactory();
 		let scaleX = leafLength;
 		let scaleY = leafLength;
 		if (scalePolicyKey === 'constant') {
@@ -83,7 +85,7 @@ export default class PlantFactory {
 			const angle = trigTable.getAngle(leafTilt);
 			const tiltScale = -angle.cos;
 			const z = angle.sin;
-			const svg = leafFactory.buildLeaf({
+			leaves.push({
 				type: leafKey,
 				translation: {
 					x,
@@ -99,10 +101,7 @@ export default class PlantFactory {
 				},
 				stroke: currentStroke,
 				fill: currentFill,
-				opacity
-			});
-			leaves.push({
-				svg,
+				opacity,
 				z
 			});
 
@@ -122,7 +121,25 @@ export default class PlantFactory {
 			if (leafTilt < leafTiltMax) leafTilt += 1;
 		}
 
+		let calculatedStemRadius = '';
+		if (useAutoStemRadius) {
+			const minScaleY = Math.min(...leaves.map(leaf => leaf.scale.y));
+			const leafH = Leaf[leafKey].h;
+			calculatedStemRadius = Math.floor(
+				minScaleY > 0 ? 0 : Math.abs(minScaleY * leafH) / 2
+			);
+
+			leaves.forEach(leaf => {
+				leaf.translation.y += stemRadius - calculatedStemRadius;
+				leaf.rotation.offsetY = calculatedStemRadius;
+			});
+		}
+		_autoStemRadius.set(this, calculatedStemRadius);
 		_leaves.set(this, leaves);
+	}
+
+	get autoStemRadius() {
+		return _autoStemRadius.get(this);
 	}
 
 	get centremarker() {
@@ -148,11 +165,13 @@ export default class PlantFactory {
 	}
 
 	buildPaths() {
+		const leafFactory = new LeafFactory();
+
 		return _leaves
 			.get(this)
 			.reverse()
 			.sort((a, b) => (a.z > b.z ? 1 : b.z > a.z ? -1 : 0))
-			.map(leaf => leaf.svg)
+			.map(leaf => leafFactory.buildSvg(leaf))
 			.join('');
 	}
 }

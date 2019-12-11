@@ -19,13 +19,17 @@
 
 	function assignProperties(doner, receiver) {
 		for (var key in receiver) receiver[key] = doner[key];
+		return receiver;
 	}
 
 	function setParameters(leaf, phyllotaxis, colour) {
 		const currentOpacity = $colourParameters.opacity;
-		assignProperties(leaf, $leafParameters);
-		assignProperties(phyllotaxis, $phyllotaxisParameters);
-		assignProperties(colour, $colourParameters);
+		$leafParameters = assignProperties(leaf, $leafParameters);
+		$phyllotaxisParameters = assignProperties(
+			phyllotaxis,
+			$phyllotaxisParameters
+		);
+		$colourParameters = assignProperties(colour, $colourParameters);
 		$colourParameters.opacity = currentOpacity;
 	}
 
@@ -35,11 +39,13 @@
 	}
 
 	function loadRandom() {
+		const currentUseAutoStemRadius = $phyllotaxisParameters.useAutoStemRadius;
 		setParameters(
 			RandomPlant.leaf,
 			RandomPlant.phyllotaxis,
 			RandomPlant.colour
 		);
+		$phyllotaxisParameters.useAutoStemRadius = currentUseAutoStemRadius;
 	}
 
 	function loadMultipleRandom() {
@@ -50,7 +56,8 @@
 				y: new Random().int(svgHeight),
 				...RandomPlant.leaf,
 				...RandomPlant.phyllotaxis,
-				...RandomPlant.colour
+				...RandomPlant.colour,
+				useAutoStemRadius
 			});
 
 		paths = parametersList
@@ -60,6 +67,7 @@
 
 	let presetKey = preset.defaultKey;
 	let addLabel = true;
+	let useAutoStemRadius;
 
 	$: plant = new Plant({
 		x: svgWidth / 2,
@@ -70,6 +78,7 @@
 	});
 	$: plantPaths = plant.buildPaths();
 	$: paths = plantPaths + (addLabel ? plant.label : '');
+	$: autoStemRadius = plant.autoStemRadius;
 
 	let multpleCount = 100;
 </script>
@@ -102,7 +111,7 @@
 	<button class="icon-button reload" on:click={reload} />
 </div>
 <LeafParameters />
-<PhyllotaxisParameters />
+<PhyllotaxisParameters {autoStemRadius} />
 <ColourParameters />
 <div>
 	<h3>SVG</h3>
@@ -116,4 +125,9 @@
 <div>
 	<label for="multpleCount">Count</label>
 	<input id="multpleCount" type="number" min="0" bind:value={multpleCount} />
+	<label for="useAutoStemRadius">AutoStemR</label>
+	<input
+		id="useAutoStemRadius"
+		type="checkbox"
+		bind:checked={useAutoStemRadius} />
 </div>

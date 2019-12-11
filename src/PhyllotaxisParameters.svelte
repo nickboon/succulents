@@ -3,6 +3,8 @@
 	import RandomPlant from './randomPlant';
 	import { phyllotaxisParameters as parameters } from './parameters';
 
+	export let autoStemRadius = '';
+
 	function loadRandomPhyllotaxis() {
 		const randomPhyllotaxis = RandomPlant.phyllotaxis;
 		$parameters.angleOffset = randomPhyllotaxis.angleOffset;
@@ -25,6 +27,9 @@
 		width: 4em;
 		margin-right: 1em;
 	}
+	input[type='checkbox'] {
+		width: auto;
+	}
 </style>
 
 <h3>
@@ -38,12 +43,23 @@
 		type="number"
 		step={preset.steps.angleOffsetStep}
 		bind:value={$parameters.angleOffset} />
-	<label for="stemRadius">Stem Radius</label>
-	<input
-		id="stemRadius"
-		type="number"
-		min="0"
-		bind:value={$parameters.stemRadius} />
+
+	<div>
+		<h4>Stem Radius</h4>
+		<label for="stemRadius">Explicit</label>
+		<input
+			id="stemRadius"
+			type="number"
+			min="0"
+			disabled={$parameters.useAutoStemRadius}
+			bind:value={$parameters.stemRadius} />
+		<label for="useAutoStemRadius">Automatic</label>
+		<input
+			id="useAutoStemRadius"
+			type="checkbox"
+			bind:checked={$parameters.useAutoStemRadius} />
+		{autoStemRadius}
+	</div>
 </div>
 <h4>Tilt</h4>
 <div>
