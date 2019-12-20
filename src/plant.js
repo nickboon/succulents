@@ -167,11 +167,11 @@ export default class PlantFactory {
 	buildPaths() {
 		const leafFactory = new LeafFactory();
 
-		return _leaves
+		const leafPaths = _leaves
 			.get(this)
 			.reverse()
 			.sort((a, b) => (a.z > b.z ? 1 : b.z > a.z ? -1 : 0))
-			.map(leaf => leafFactory.buildSvg(leaf))
-			.join('');
+			.map(leaf => leafFactory.buildSvg(leaf));
+		return ['<g>', ...leafPaths, '</g>'].join('');
 	}
 }
